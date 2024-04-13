@@ -1,5 +1,5 @@
 import cmd, sys
-from Entities import Character
+from Entities import Hero
 from Utility import Direction
 
 class HelloWorld(cmd.Cmd):
