@@ -8,10 +8,9 @@ class Hero (Entity):
     def __init__(self,iniciative,weapon,armor,position,list_of_moves, max_health,
                 name="Ziutek",
                  direction = "tutaj bedzie enum",initiative=0):
-        super().__init__(initiative,position,list_of_moves,max_health,direction)
+        super().__init__(iniciative,position,list_of_moves,max_health,direction,weapon)
         self.name = name
         self.initiative=initiative
-        self.weapon=weapon
         self.armor=armor
         self.inventory = []
         self.alive = True

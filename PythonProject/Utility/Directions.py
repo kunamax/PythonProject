@@ -20,13 +20,23 @@ class Directions(Enum):
         }
         return result[self]
 
-
+    @property
     def turn_left_90_degrees(self):
         result = {
             Directions.NORTH: Directions.WEST,
             Directions.WEST: Directions.SOUTH,
             Directions.SOUTH: Directions.EAST,
             Directions.EAST: Directions.NORTH
+        }
+        return result[self]\
+
+    @property
+    def opposite(self):
+        result = {
+            Directions.NORTH: Directions.SOUTH,
+            Directions.WEST: Directions.EAST,
+            Directions.SOUTH: Directions.NORTH,
+            Directions.EAST: Directions.WEST
         }
         return result[self]
     def to_vector2d(self)->Vector2d:

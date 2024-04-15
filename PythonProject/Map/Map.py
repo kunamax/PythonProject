@@ -1,7 +1,5 @@
 class Map:
-    def __init__(self):
-        self.tiles_dictionary={}# KEY: Vecotr2d, VAL: Cell Cell is a  list of entities, walls itd
-        #from colections impotrt defaultdict
-        #slownik=defaultdict
-    #moj_slownik = {vector: Tile, itd}
-    #moj_slownik = {vector: Tile, itd}
+    def __init__(self,tiles_dictionary,lower_left_vector2d):
+        self.tiles_dictionary=tiles_dictionary
+        #key: lower left vector that is dividible by 10
+        #val: tile that lower left vector is key
