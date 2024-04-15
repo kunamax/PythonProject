@@ -1,10 +1,10 @@
-import Entities.Entity
+from Entities.Entity import Entity
 
-class Trap(Entities.Entity):
-    def __int__(self,iniciative,weapon,position,list_of_moves,max_health,direction):
-        self.super().__init__(self,iniciative,weapon,position,list_of_moves,max_health,direction)
+class Trap(Entity):
+    def __init__(self,initiative,weapon,position,list_of_moves,max_health,direction):
+        super().__init__(self,initiative,position,list_of_moves,max_health,direction)
 
     def deal_damage(self):
-        self.super().deal_damage()
+        super().deal_damage()
     def move(self):
-        self.super().deal_damage()
+        super().deal_damage()
