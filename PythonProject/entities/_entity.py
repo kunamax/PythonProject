@@ -1,11 +1,15 @@
-from abc import ABC as abc
-from Utility.Vector2d import Vector2d
+from abc import ABC, abstractmethod
+from utility._vector2d import Vector2d
 from typing import List
-from Utility.Directions import Directions
-from Map.Wall import Wall, WallType
+from utility._directions import Directions
+from map._wall import Wall, WallType
+from items._weapon import Weapon
+from map import Map
 
-class Entity(abc):
-    def __init__(self,initiative,position,list_of_moves,max_health,direction,weapon):
+class Entity(ABC):
+    @abstractmethod
+    def __init__(self,initiative:int,position:Directions,list_of_moves:List[Vector2d],max_health:int,
+                 direction:Directions,weapon:Weapon):
         self.initiative=initiative
         self.position=position
         self.list_of_moves=list_of_moves#directions list
@@ -17,15 +21,16 @@ class Entity(abc):
         self.alive = True
         self.on_wall=False
 
-    def move(self,map)->Vector2d:
+    @abstractmethod
+    def move(self,map:Map)->Vector2d:
         #predict next vector
         self.move_index = (self.move_index + 1) % len(self.list_of_moves)
         next_cell_vector_candodate=self.position+self.list_of_moves[self.move_index].to_vector2d()
         next_wall=map[Vector2d(next_cell_vector_candodate.x//10,next_cell_vector_candodate.y//10)]\
         [Vector2d(next_cell_vector_candodate.x,next_cell_vector_candodate.y)]
         next_cell_vector=None
-        
-        
+
+
         if self.on_wall:
             if next_wall.type == WallType.EMPTY:
                 self.on_wall=False
@@ -72,14 +77,16 @@ class Entity(abc):
                     self.current_direction = next_wall.facing[0]
             return next_cell_vector
 
+    @abstractmethod
     def attack(self)->  List[Vector2d]:
         return [self.position+attack.rotate_to(self.current_direction) for attack in self.weapon.list_of_attacks]
 
+    # @abstractmethod
+    # def deal_damage(self):
+    #     pass
 
-    def deal_damage(self):
-        pass
-
-    def take_damage(self,damage):
+    @abstractmethod
+    def take_damage(self,damage:int)->None:
         self.current_health -= damage
         if self.current_health <= 0:
             self.alive = False

@@ -1,6 +1,6 @@
 import cmd, sys
-from Entities import Hero
-from Utility import Directions
+from entities import Hero
+from utility import Directions
 
 class HelloWorld(cmd.Cmd):
     intro = 'Welcome to the turtle shell.   Type help or ? to list commands.\n'
