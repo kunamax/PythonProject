@@ -1,10 +1,11 @@
 import pygame
-from entities._hero import Hero
-from items._healing_potion import HealingPotion
-from items._armor import Armor
-from items._weapon import Weapon
-from application._button import Button
-from application._text import Text
+
+from entities import Hero
+from items import HealingPotion
+from items import Armor
+from items import Weapon
+from application import Button
+from application import Text
 
 
 class Game:
