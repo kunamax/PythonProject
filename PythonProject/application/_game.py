@@ -6,6 +6,8 @@ from items import Armor
 from items import Weapon
 from application import Button
 from application import Text
+from application import GameEngine
+
 
 
 class Game:
@@ -20,6 +22,9 @@ class Game:
         self.equip_weapon_button = Button(50, 110, 200, 50, "Equip Weapon")
         self.equip_armor_button = Button(50, 170, 200, 50, "Equip Armor")
         self.character_text = Text(50, 230, "")
+
+        self.game_engine = GameEngine()
+        self.game_engine.create_map()
 
     def run(self):
         weapon = Weapon("Sword", "A sharp blade", 10, 5)

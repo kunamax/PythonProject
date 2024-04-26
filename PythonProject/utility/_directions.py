@@ -1,5 +1,5 @@
 from enum import Enum
-from utility import Vector2d
+from _vector2d import Vector2d
 class Directions(Enum):
     NORTH=0
     NORTH_EAST=1

@@ -1,1 +1,1 @@
-from _weapon import Weapon
+from components._weapon import Weapon

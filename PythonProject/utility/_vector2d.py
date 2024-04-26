@@ -1,4 +1,4 @@
-from utility import Directions
+from _directions import Directions
 class Vector2d:
     def __init__(self, x, y):
         self.x = x
