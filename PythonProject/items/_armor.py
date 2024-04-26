@@ -1,4 +1,4 @@
-from items._item import Item
+from PythonProject.Items import Item
 
 
 class Armor(Item):

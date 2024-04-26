@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
-from utility._vector2d import Vector2d
+from PythonProject.Utility import Vector2d
 from typing import List
-from utility._directions import Directions
-from map._wall import Wall, WallType
-from items._weapon import Weapon
-from map import Map
+from PythonProject.Utility import Directions
+from PythonProject.Map import  Map,Wall,WallType
+from PythonProject.Items import Weapon
 
 class Entity(ABC):
     @abstractmethod

@@ -1,1 +1,1 @@
-from components._weapon import Weapon
+from PythonProject.components._player import Player
