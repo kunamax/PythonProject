@@ -5,6 +5,10 @@ from Items.Armor import Armor
 from Items.Weapon import Weapon
 from Application.Button import Button
 from Application.Text import Text
+from Application.GameEngine import GameEngine
+from Map.Wall import Wall
+from Map.Floor import Floor
+from Map.HeroOnMap import HeroOnMap
 
 
 class Game:
@@ -12,6 +16,7 @@ class Game:
         pygame.init()
         self.screen = pygame.display.set_mode((800, 600))
         self.clock = pygame.time.Clock()
+        self.scale = 100
         self.running = True
         self.hero = None
 
@@ -19,6 +24,7 @@ class Game:
         self.equip_weapon_button = Button(50, 110, 200, 50, "Equip Weapon")
         self.equip_armor_button = Button(50, 170, 200, 50, "Equip Armor")
         self.character_text = Text(50, 230, "")
+        self.game_engine = GameEngine()
 
     def run(self):
         weapon = Weapon("Sword", "A sharp blade", 10, 5)
@@ -66,14 +72,26 @@ class Game:
         pass
 
     def draw(self):
-        self.screen.fill((0, 0, 0))
-        self.create_button.draw(self.screen)
-        self.equip_weapon_button.draw(self.screen)
-        self.equip_armor_button.draw(self.screen)
-        self.character_text.draw(self.screen)
-        if self.hero:
-            self.hero.draw(self.screen)
+        # self.screen.fill((0, 0, 0))
+        self.draw_map()
+        # self.create_button.draw(self.screen)
+        # self.equip_weapon_button.draw(self.screen)
+        # self.equip_armor_button.draw(self.screen)
+        # self.character_text.draw(self.screen)
+        # if self.hero:
+        #     self.hero.draw(self.screen)
         pygame.display.flip()
+
+    def draw_map(self):
+        map = self.game_engine.get_map()
+        for position, tile in map.items():
+            x, y = position
+            if isinstance(tile, Wall):
+                pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(x * self.scale, y * self.scale, self.scale, self.scale))
+            elif isinstance(tile, Floor):
+                pygame.draw.rect(self.screen, (0, 50, 0), pygame.Rect(x * self.scale, y * self.scale, self.scale, self.scale))
+            elif isinstance(tile, HeroOnMap):
+                pygame.draw.circle(self.screen, (255, 0, 0), (x * self.scale + self.scale // 2, y * self.scale + self.scale // 2), self.scale // 2)
 
     def add_item(self, item):
         if self.hero:
