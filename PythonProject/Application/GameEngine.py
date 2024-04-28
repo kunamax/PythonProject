@@ -11,7 +11,7 @@ class GameEngine:
         self.hero_position = (0, 3)
         for x in range(8):
             for y in range(6):
-                if random.random() < 0.2 or x == 0 or x == 7 or y == 0 or y == 7:
+                if random.random() < 0.2 or x == 0 or x == 7 or y == 0 or y == 5:
                     self.map[(x, y)] = Wall(0, 1) # sample type and facing
                 else:
                     self.map[(x, y)] = Floor()
