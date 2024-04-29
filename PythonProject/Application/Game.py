@@ -1,14 +1,14 @@
 import pygame
-from Entities.Hero import Hero
-from Items.HealingPotion import HealingPotion
-from Items.Armor import Armor
-from Items.Weapon import Weapon
-from Application.Button import Button
-from Application.Text import Text
-from Application.GameEngine import GameEngine
-from Map.Wall import Wall
-from Map.Floor import Floor
-from Map.HeroOnMap import HeroOnMap
+from PythonProject.Entities.Hero import Hero
+from PythonProject.Items.HealingPotion import HealingPotion
+from PythonProject.Items.Armor import Armor
+from PythonProject.Items.Weapon import Weapon
+from PythonProject.Application.Button import Button
+from PythonProject.Application.Text import Text
+from PythonProject.Application.GameEngine import GameEngine
+from PythonProject.Map.Wall import Wall
+from PythonProject.Map.Floor import Floor
+from PythonProject.Map.HeroOnMap import HeroOnMap
 import time
 
 
@@ -22,9 +22,9 @@ class Game:
         self.paused = False
         self.hero = None
 
-        self.wall_texture = pygame.image.load("Resources/wall.jpg")
-        self.floor_texture = pygame.image.load("Resources/floor.jpg")
-        self.hero_texture = pygame.image.load("Resources/hero.png")
+        self.wall_texture = pygame.image.load("..\Resources\wall.jpg")
+        self.floor_texture = pygame.image.load(r"..\Resources\floor.jpg")
+        self.hero_texture = pygame.image.load("..\Resources\hero.png")
         self.wall_texture = pygame.transform.scale(self.wall_texture, (self.scale, self.scale))
         self.floor_texture = pygame.transform.scale(self.floor_texture, (self.scale, self.scale))
         self.hero_texture = pygame.transform.scale(self.hero_texture, (self.scale, self.scale))

@@ -1,8 +1,8 @@
 from abc import ABC as abc
-from Utility.Vector2d import Vector2d
+from PythonProject.Utility.Vector2d import Vector2d
 from typing import List
-from Utility.Directions import Directions
-from Map.Wall import Wall, WallType
+from PythonProject.Utility.Directions import Directions
+from PythonProject.Map.Wall import Wall, WallType
 
 class Entity(abc):
     def __init__(self,initiative,position,list_of_moves,max_health,direction,weapon):

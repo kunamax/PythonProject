@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="1fe2bd94-136e-48f2-8920-9056b3320c22" name="Changes" comment="works but i'm not sure about cleanliness of code">
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Game.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/GameEngine.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/GameEngine.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Entities/Entity.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Entities/Entity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Entities/Hero.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Entities/Hero.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Items/Armor.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Items/Armor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Items/HealingPotion.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Items/HealingPotion.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Items/Weapon.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Items/Weapon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Map/Cell.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Map/Cell.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Map/Map.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Map/Map.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Map/Tile.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Map/Tile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Map/Wall.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Map/Wall.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Utility/Directions.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Utility/Directions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Utility/Vector2d.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Utility/Vector2d.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2fEX8HkwGPVtvqjnI7zS23flVNV" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/nauka/PythonProject&quot;
+  }
+}</component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1fe2bd94-136e-48f2-8920-9056b3320c22" name="Changes" comment="" />
+      <created>1713367049474</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1713367049474</updated>
+    </task>
+    <task id="LOCAL-00001" summary="works but i'm not sure about cleanliness of code">
+      <created>1714157242726</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1714157242726</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="works but i'm not sure about cleanliness of code" />
+    <option name="LAST_COMMIT_MESSAGE" value="works but i'm not sure about cleanliness of code" />
+  </component>
+</project>

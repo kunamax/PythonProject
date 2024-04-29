@@ -1,5 +1,5 @@
 from enum import Enum
-
+from PythonProject.Utility.Directions import Directions
 class WallType(Enum):
     EMPTY=0
     FULL=1
@@ -8,14 +8,12 @@ class WallType(Enum):
 
 class Wall:
     '''
-    type=0: facing doesn't matter but should be None
-    type=1: facing doesn't matter but should be None
-    type=2: facing is a pair of directions witch hero will bounce
-    type=3: facing is a par of directions witch:
-                                                first is start of stairs
-                                                second is end of stairs
+    type=0: facing doesn't matter
+    type=1: facing doesn't matter
+    type=2: facing is direction in with the tile is empty
+    type=3: facing is direction in with hero will be getting higher
     '''
-    def __init__(self,type,facing):
+    def __init__(self,type:WallType,facing:Directions):
         self.type=type
         self.facing=facing
         #TODO: here will be a assertion error check about length of facing list

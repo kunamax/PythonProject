@@ -1,6 +1,6 @@
-from Entities.Entity import Entity
-from Items.Armor import Armor
-from Items.Weapon import Weapon
+from PythonProject.Entities.Entity import Entity
+from PythonProject.Items.Armor import Armor
+from PythonProject.Items.Weapon import Weapon
 import pygame
 
 
