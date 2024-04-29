@@ -1,16 +1,18 @@
 from PythonProject.Utility.Vector2d import Vector2d
-from Tile import Tile
-from Cell import Cell
+from PythonProject.Map.Tile import Tile
+from PythonProject.Map.Cell import Cell
 
 
 class Map:
-    def __init__(self, tiles_dictionary: dict[Vector2d, Tile] = {}):
+    def __init__(self, tiles_dictionary: dict[Vector2d, Tile]=None):
         self.tiles_dictionary = tiles_dictionary
+        if self.tiles_dictionary==None:
+            self.tiles_dictionary={}
 
     def __getitem__(self, item: Vector2d) -> Cell:
         return self.tiles_dictionary[item // 10][item % 10]
 
-    def generate_demo(self):
+    def generate_demo(self)->None:
         coordinates = [-10, 0, 10]
         for x in coordinates:
             for y in coordinates:

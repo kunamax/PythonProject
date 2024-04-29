@@ -1,8 +1,9 @@
 from PythonProject.Items.Item import Item
+from PythonProject.Utility.Vector2d import Vector2d
 
 
 class Weapon(Item):
-    def __init__(self, name, description, weight, damage):
+    def __init__(self, name, description, weight, damage,list_of_attacks:list[Vector2d]):
         super().__init__(name, description, weight)
         self.damage = damage
         self.equipped = False

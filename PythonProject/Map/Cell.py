@@ -1,5 +1,5 @@
 from PythonProject.Entities import Entity
-from Wall import Wall,WallType
+from PythonProject.Map.Wall import Wall,WallType
 class Cell:
     def __init__(self,wall:Wall,entities:list[Entity]):
         self.wall=wall
