@@ -1,7 +1,7 @@
-from PythonProject.Utility.Vector2d import Vector2d
-from PythonProject.Utility.Directions import Directions
-from PythonProject.Map.Cell import Cell
-from PythonProject.Map.Wall import Wall,WallType
+from Utility import Vector2d
+from Utility import Directions
+from ._cell import Cell
+from ._wall import Wall,WallType
 class Tile:
     def __init__(self,lower_left_vector2d:Vector2d,cells_dict:dict[Vector2d,Cell]={}):
         # assert TODO: jakis error wpisywania danych

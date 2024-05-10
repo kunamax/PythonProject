@@ -4,3 +4,4 @@ class Floor:
 
     def __str__(self):
         return self.symbol
+    #TODO: do usuniecia

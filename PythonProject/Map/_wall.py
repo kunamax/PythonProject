@@ -1,5 +1,5 @@
 from enum import Enum
-from PythonProject.Utility.Directions import Directions
+from Utility._directions import Directions
 class WallType(Enum):
     EMPTY=0
     FULL=1

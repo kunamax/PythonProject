@@ -1,8 +1,8 @@
-from PythonProject.Entities.Entity import Entity
-from PythonProject.Items.Armor import Armor
-from PythonProject.Items.Weapon import Weapon
-from PythonProject.Utility.Vector2d import Vector2d
-from PythonProject.Utility.Directions import Directions
+from ._entity import Entity
+from Items import Armor
+from Items import Weapon
+from Utility import Vector2d
+from Utility import Directions
 import pygame
 
 

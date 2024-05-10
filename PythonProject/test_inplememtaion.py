@@ -1,9 +1,9 @@
-from Map.Map import Map
-from Entities.Hero import Hero
-from Items.Weapon import Weapon
-from Items.Armor import Armor
-from Utility.Vector2d import Vector2d
-from Utility.Directions import Directions
+from Map import Map
+from Entities import Hero
+from Items import Weapon
+from Items import Armor
+from Utility import Vector2d
+from Utility import Directions
 
 if __name__=="__main__":
     map=Map()
@@ -21,7 +21,7 @@ if __name__=="__main__":
     print()
     print(map[Vector2d(5,4)].wall.type,map[Vector2d(5,4)].wall.facing)
     print()
-    for i in range(28):
+    for i in range(27):
         print(hero.position)
         print(hero.current_direction)
         hero.move(map)

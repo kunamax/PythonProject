@@ -1,4 +1,4 @@
-from PythonProject.Items.Item import Item
+from ._item import Item
 
 class HealingPotion(Item):
     def __init__(self, name, description, weight, heal_amount):

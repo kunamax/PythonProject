@@ -1,6 +1,6 @@
-from PythonProject.Map.Floor import Floor
-from PythonProject.Map.Wall import Wall
-from PythonProject.Map.HeroOnMap import HeroOnMap
+from Map._floor import Floor
+from Map._wall import Wall
+from Map._heroOnMap import HeroOnMap
 
 import random
 import pygame

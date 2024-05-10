@@ -1,5 +1,5 @@
-from PythonProject.Items.Item import Item
-from PythonProject.Utility.Vector2d import Vector2d
+from ._item import Item
+from Utility import Vector2d
 
 
 class Weapon(Item):

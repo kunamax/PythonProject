@@ -1,14 +1,14 @@
 import pygame
-from PythonProject.Entities.Hero import Hero
-from PythonProject.Items.HealingPotion import HealingPotion
-from PythonProject.Items.Armor import Armor
-from PythonProject.Items.Weapon import Weapon
-from PythonProject.Application.Button import Button
-from PythonProject.Application.Text import Text
-from PythonProject.Application.GameEngine import GameEngine
-from PythonProject.Map.Wall import Wall
-from PythonProject.Map.Floor import Floor
-from PythonProject.Map.HeroOnMap import HeroOnMap
+from Entities import Hero
+from Items import HealingPotion
+from Items import Armor
+from Items import Weapon
+from _button import Button
+from Text import Text
+from GameEngine import GameEngine
+from Map import Wall
+from Map import Floor
+from Map import HeroOnMap
 import time
 
 
@@ -22,9 +22,9 @@ class Game:
         self.paused = False
         self.hero = None
 
-        self.wall_texture = pygame.image.load("..\Resources\wall.jpg")
-        self.floor_texture = pygame.image.load(r"..\Resources\floor.jpg")
-        self.hero_texture = pygame.image.load("..\Resources\hero.png")
+        self.wall_texture = pygame.image.load("Resources/wall.jpg")
+        self.floor_texture = pygame.image.load("Resources/floor.jpg")
+        self.hero_texture = pygame.image.load("Resources/hero.png")
         self.wall_texture = pygame.transform.scale(self.wall_texture, (self.scale, self.scale))
         self.floor_texture = pygame.transform.scale(self.floor_texture, (self.scale, self.scale))
         self.hero_texture = pygame.transform.scale(self.hero_texture, (self.scale, self.scale))
@@ -37,7 +37,7 @@ class Game:
         self.game_engine = GameEngine()
 
     def run(self):
-        weapon = Weapon("Sword", "A sharp blade", 10, 5)
+        weapon = Weapon("Sword", "A sharp blade", 10, 5, [(0, 1), (1, 1), (-1, 1), (0, 2)])
         armor = Armor("Shield", "A sturdy shield", 15, 3)
         position = (0, 3)
         list_of_moves = [(1, 0), (0, 1), (-1, 0), (0, -1)]
