@@ -14,8 +14,8 @@ class GameEngine:
         self.hero_position = Vector2d(0, 0)
         self.map.generate_demo()
 
-        starting_tile = self.map.tiles_dictionary[self.hero_position]
-        starting_cell = starting_tile.cells_dict[Vector2d(0, 0)]
+        starting_tile = self.map.tiles_dictionary[self.hero_position // 10]
+        starting_cell = starting_tile.cells_dict[self.hero_position % 10]
         starting_cell.entities.append(HeroOnMap(self.hero_position))
 
     def get_map(self):
@@ -31,15 +31,14 @@ class GameEngine:
         self.hero_position = new_position
 
     def update_map(self, old_position, new_position):
-        if new_position in self.map.tiles_dictionary and not self.map.tiles_dictionary[new_position].cells_dict[
-                                                                 Vector2d(0, 0)].wall.type == WallType.FULL:
+        if new_position // 10 in self.map.tiles_dictionary and not self.map[new_position].wall.type == WallType.FULL:
 
-            old_tile = self.map.tiles_dictionary[old_position]
-            old_cell = old_tile.cells_dict[Vector2d(old_position.x % 10, old_position.y % 10)]
+            old_tile = self.map.tiles_dictionary[old_position // 10]
+            old_cell = old_tile.cells_dict[old_position % 10]
             old_cell.entities = [entity for entity in old_cell.entities if not isinstance(entity, HeroOnMap)]
 
-            new_tile = self.map.tiles_dictionary[new_position]
-            new_cell = new_tile.cells_dict[Vector2d(new_position.x % 10, new_position.y % 10)]
+            new_tile = self.map.tiles_dictionary[new_position // 10]
+            new_cell = new_tile.cells_dict[new_position % 10]
             new_cell.entities.append(HeroOnMap(new_position))
 
             self.hero_position = new_position

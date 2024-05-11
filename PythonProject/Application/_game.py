@@ -74,7 +74,8 @@ class Game:
                     quit()
                 elif self.reset_button.is_clicked(event):
                     self.game_engine = GameEngine()
-                    self.set_position((0, 3))
+                    self.hero_position = Vector2d(0, 0)
+                    self.game_engine.set_hero_position(self.hero_position)
                 elif self.resume_button.is_clicked(event):
                     self.paused = False
             elif event.type == pygame.KEYDOWN and not self.paused:
@@ -88,12 +89,20 @@ class Game:
                     new_position = Vector2d(self.hero_position.x - 1, self.hero_position.y)
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     new_position = Vector2d(self.hero_position.x + 1, self.hero_position.y)
-                print(self.game_engine.update_map(old_position, new_position))
-                if self.game_engine.update_map(old_position, new_position):
+
+                while self.game_engine.update_map(old_position, new_position):
                     self.hero_position = new_position
+                    old_position = new_position
+                    if event.key == pygame.K_UP or event.key == pygame.K_w:
+                        new_position = Vector2d(self.hero_position.x, self.hero_position.y - 1)
+                    elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        new_position = Vector2d(self.hero_position.x, self.hero_position.y + 1)
+                    elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                        new_position = Vector2d(self.hero_position.x - 1, self.hero_position.y)
+                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                        new_position = Vector2d(self.hero_position.x + 1, self.hero_position.y)
                 print(new_position)
                 print(self.hero_position)
-
 
     def update(self):
         pass
@@ -104,7 +113,6 @@ class Game:
         overlay.set_alpha(60)
         self.screen.blit(overlay, (0, 0))
         self.resume_button.draw(self.screen)
-        #self.pause_text.draw(self.screen)
         pygame.display.flip()
 
     def draw(self):
@@ -133,7 +141,6 @@ class Game:
                         pygame.transform.scale(self.floor_texture, (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
                 if any(isinstance(entity, HeroOnMap) for entity in cell.entities):
-                    print("Hero")
                     self.screen.blit(
                         pygame.transform.scale(self.hero_texture, (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))

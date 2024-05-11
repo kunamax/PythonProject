@@ -18,17 +18,18 @@ class Map:
     def move(self):
         ...
 
-    def generate_demo(self)->None:
-        size = 10  # Define the size of the maze
+    def generate_demo(self):
+        size = 10  # Define the size of the map
         for x in range(-size, size + 1):
             for y in range(-size, size + 1):
-                self.tiles_dictionary[Vector2d(x, y)] = Tile(Vector2d(x, y), {})
+                tile = Tile(Vector2d(x, y), {})
                 for i in range(10):
                     for j in range(10):
                         if random.choice([True, False]):  # Randomly decide if the cell is a wall
-                            self.tiles_dictionary[Vector2d(x, y)].cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(1), Directions(0)), [])
+                            tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(1), Directions(0)), [])
                         else:
-                            self.tiles_dictionary[Vector2d(x, y)].cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(0), Directions(0)), [])
+                            tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(0), Directions(0)), [])
+                self.tiles_dictionary[Vector2d(x, y)] = tile
 
         # self.tiles_dictionary[Vector2d(0, 0)].generate_demo_cross()
         #
