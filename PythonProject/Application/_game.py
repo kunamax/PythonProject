@@ -6,9 +6,10 @@ from Items import Weapon
 from _button import Button
 from Text import Text
 from GameEngine import GameEngine
-from Map import Wall
+from Map import Wall, WallType
 from Map import Floor
 from Map import HeroOnMap
+from Utility import Vector2d
 import time
 
 
@@ -35,6 +36,8 @@ class Game:
         self.resume_button = Button(400, 300, 200, 100, "Resume Game")
 
         self.game_engine = GameEngine()
+        self.hero_position = Vector2d(0, 0)
+        self.game_engine.set_hero_position(self.hero_position)
 
     def run(self):
         weapon = Weapon("Sword", "A sharp blade", 10, 5, [(0, 1), (1, 1), (-1, 1), (0, 2)])
@@ -75,31 +78,21 @@ class Game:
                 elif self.resume_button.is_clicked(event):
                     self.paused = False
             elif event.type == pygame.KEYDOWN and not self.paused:
+                print(self.hero_position)
+                old_position = self.hero_position
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
-                    while True:
-                        new_position = (self.hero.position[0], self.hero.position[1] - 1)
-                        if not self.game_engine.update_map(self.hero.position, new_position):
-                            break
-                        self.hero.position = new_position
+                    new_position = Vector2d(self.hero_position.x, self.hero_position.y - 1)
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    while True:
-                        new_position = (self.hero.position[0], self.hero.position[1] + 1)
-                        if not self.game_engine.update_map(self.hero.position, new_position):
-                            break
-                        self.hero.position = new_position
+                    new_position = Vector2d(self.hero_position.x, self.hero_position.y + 1)
                 elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                    while True:
-                        new_position = (self.hero.position[0] - 1, self.hero.position[1])
-                        if not self.game_engine.update_map(self.hero.position, new_position):
-                            break
-                        self.hero.position = new_position
+                    new_position = Vector2d(self.hero_position.x - 1, self.hero_position.y)
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    while True:
-                        new_position = (self.hero.position[0] + 1, self.hero.position[1])
-                        if not self.game_engine.update_map(self.hero.position, new_position):
-                            break
-                        self.hero.position = new_position
-                print(self.hero.position)
+                    new_position = Vector2d(self.hero_position.x + 1, self.hero_position.y)
+                print(self.game_engine.update_map(old_position, new_position))
+                if self.game_engine.update_map(old_position, new_position):
+                    self.hero_position = new_position
+                print(new_position)
+                print(self.hero_position)
 
 
     def update(self):
@@ -126,14 +119,24 @@ class Game:
 
     def draw_map(self):
         map = self.game_engine.get_map()
-        for position, tile in map.items():
-            x, y = position
-            if isinstance(tile, Wall):
-                self.screen.blit(self.wall_texture, (x*self.scale, y*self.scale))
-            elif isinstance(tile, Floor):
-                self.screen.blit(self.floor_texture, (x*self.scale, y*self.scale))
-            elif isinstance(tile, HeroOnMap):
-                self.screen.blit(self.hero_texture, (x*self.scale, y*self.scale))
+        scale = 2  # Define the scale of the map
+        for tile_position, tile in map.tiles_dictionary.items():
+            for cell_position, cell in tile.cells_dict.items():
+                x, y = (tile_position.x * 10 + cell_position.x) / scale, (
+                            tile_position.y * 10 + cell_position.y) / scale
+                if cell.wall.type == WallType.FULL:
+                    self.screen.blit(
+                        pygame.transform.scale(self.wall_texture, (self.scale // scale, self.scale // scale)),
+                        (x * self.scale, y * self.scale))
+                elif cell.wall.type == WallType.EMPTY:
+                    self.screen.blit(
+                        pygame.transform.scale(self.floor_texture, (self.scale // scale, self.scale // scale)),
+                        (x * self.scale, y * self.scale))
+                if any(isinstance(entity, HeroOnMap) for entity in cell.entities):
+                    print("Hero")
+                    self.screen.blit(
+                        pygame.transform.scale(self.hero_texture, (self.scale // scale, self.scale // scale)),
+                        (x * self.scale, y * self.scale))
 
     def add_item(self, item):
         if self.hero:

@@ -1,6 +1,9 @@
 from Utility import Vector2d
+from Utility import Directions
 from ._tile import Tile
 from ._cell import Cell
+from ._wall import Wall, WallType
+import random
 
 
 class Map:
@@ -16,23 +19,29 @@ class Map:
         ...
 
     def generate_demo(self)->None:
-        coordinates = [-10, 0, 10]
-        for x in coordinates:
-            for y in coordinates:
+        size = 10  # Define the size of the maze
+        for x in range(-size, size + 1):
+            for y in range(-size, size + 1):
                 self.tiles_dictionary[Vector2d(x, y)] = Tile(Vector2d(x, y), {})
+                for i in range(10):
+                    for j in range(10):
+                        if random.choice([True, False]):  # Randomly decide if the cell is a wall
+                            self.tiles_dictionary[Vector2d(x, y)].cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(1), Directions(0)), [])
+                        else:
+                            self.tiles_dictionary[Vector2d(x, y)].cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(0), Directions(0)), [])
 
-        self.tiles_dictionary[Vector2d(0, 0)].generate_demo_cross()
-
-        self.tiles_dictionary[Vector2d(10, 0)].generate_demo_turn()
-        self.tiles_dictionary[Vector2d(0, 10)].generate_demo_turn()
-        self.tiles_dictionary[Vector2d(10, 10)].generate_demo_blank()
-
-        self.tiles_dictionary[Vector2d(-10, 0)].generate_demo_cross()
-        self.tiles_dictionary[Vector2d(0, -10)].generate_demo_cross()
-        self.tiles_dictionary[Vector2d(-10, -10)].generate_demo_blank()
-
-        self.tiles_dictionary[Vector2d(-10, 10)].generate_demo_cross()
-        self.tiles_dictionary[Vector2d(10, -10)].generate_demo_cross()
+        # self.tiles_dictionary[Vector2d(0, 0)].generate_demo_cross()
+        #
+        # self.tiles_dictionary[Vector2d(10, 0)].generate_demo_turn()
+        # self.tiles_dictionary[Vector2d(0, 10)].generate_demo_turn()
+        # self.tiles_dictionary[Vector2d(10, 10)].generate_demo_blank()
+        #
+        # self.tiles_dictionary[Vector2d(-10, 0)].generate_demo_cross()
+        # self.tiles_dictionary[Vector2d(0, -10)].generate_demo_cross()
+        # self.tiles_dictionary[Vector2d(-10, -10)].generate_demo_blank()
+        #
+        # self.tiles_dictionary[Vector2d(-10, 10)].generate_demo_cross()
+        # self.tiles_dictionary[Vector2d(10, -10)].generate_demo_cross()
 
 
 if __name__ == "__main__":

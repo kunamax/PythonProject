@@ -1,22 +1,22 @@
-from Map._floor import Floor
-from Map._wall import Wall
+from Map._map import Map
+from Map._tile import Tile
+from Map._cell import Cell
+from Map._wall import Wall, WallType
 from Map._heroOnMap import HeroOnMap
+from Utility import Vector2d
 
 import random
 import pygame
 
 class GameEngine:
     def __init__(self):
-        self.map = {}
-        self.hero_position = (0, 3)
-        for x in range(8):
-            for y in range(6):
-                if random.random() < 0.2 or x == 0 or x == 7 or y == 0 or y == 5:
-                    self.map[(x, y)] = Wall(0, 1) # sample type and facing
-                else:
-                    self.map[(x, y)] = Floor()
-                if (x, y) == self.hero_position:
-                    self.map[(x, y)] = HeroOnMap(self.hero_position)
+        self.map = Map()
+        self.hero_position = Vector2d(0, 0)
+        self.map.generate_demo()
+
+        starting_tile = self.map.tiles_dictionary[self.hero_position]
+        starting_cell = starting_tile.cells_dict[Vector2d(0, 0)]
+        starting_cell.entities.append(HeroOnMap(self.hero_position))
 
     def get_map(self):
         return self.map
@@ -31,11 +31,18 @@ class GameEngine:
         self.hero_position = new_position
 
     def update_map(self, old_position, new_position):
-        if old_position in self.map and isinstance(self.map[old_position], HeroOnMap) and new_position in self.map and not isinstance(self.map[new_position], Wall):
-            self.map[old_position] = Floor()
-            self.map[new_position] = HeroOnMap(new_position)
+        if new_position in self.map.tiles_dictionary and not self.map.tiles_dictionary[new_position].cells_dict[
+                                                                 Vector2d(0, 0)].wall.type == WallType.FULL:
+
+            old_tile = self.map.tiles_dictionary[old_position]
+            old_cell = old_tile.cells_dict[Vector2d(old_position.x % 10, old_position.y % 10)]
+            old_cell.entities = [entity for entity in old_cell.entities if not isinstance(entity, HeroOnMap)]
+
+            new_tile = self.map.tiles_dictionary[new_position]
+            new_cell = new_tile.cells_dict[Vector2d(new_position.x % 10, new_position.y % 10)]
+            new_cell.entities.append(HeroOnMap(new_position))
+
             self.hero_position = new_position
             return True
         else:
             return False
-
