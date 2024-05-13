@@ -106,11 +106,12 @@ class Game:
                     new_position = Vector2d(self.hero_position.x - 1, self.hero_position.y)
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     new_position = Vector2d(self.hero_position.x + 1, self.hero_position.y)
+                print(self.hero_position)
                 print(new_position)
                 new_cell = self.game_engine.get_map()[new_position]
                 print(self.game_engine.get_map()[new_position].wall.type)
-                print(new_cell.wall.type)
                 if new_cell is not None and not new_cell.wall.type == WallType.FULL:
+                    print(self.game_engine.update_map(self.hero_position, new_position))
                     if self.game_engine.update_map(self.hero_position, new_position):
                         self.hero_position = new_position
 

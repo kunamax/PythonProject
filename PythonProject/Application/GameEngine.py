@@ -28,14 +28,11 @@ class GameEngine:
         self.hero_position = new_position
 
     def update_map(self, old_position, new_position):
-        old_tile = self.map.tiles_dictionary.get(old_position // 10)
-        new_tile = self.map.tiles_dictionary.get(new_position // 10)
-        if old_tile is not None and new_tile is not None:
-            old_cell = old_tile.cells_dict.get(old_position % 10)
-            new_cell = new_tile.cells_dict.get(new_position % 10)
-            if old_cell is not None and new_cell is not None and not new_cell.wall.type == WallType.FULL:
-                old_cell.entities = [entity for entity in old_cell.entities if not isinstance(entity, HeroOnMap)]
-                new_cell.entities.append(HeroOnMap(new_position))
-                self.hero_position = new_position
-                return True
+        old_cell = self.map[old_position]
+        new_cell = self.map[new_position]
+        if old_cell is not None and new_cell is not None and not new_cell.wall.type == WallType.FULL:
+            old_cell.entities = [entity for entity in old_cell.entities if not isinstance(entity, HeroOnMap)]
+            new_cell.entities.append(HeroOnMap(new_position))
+            self.hero_position = new_position
+            return True
         return False

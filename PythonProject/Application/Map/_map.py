@@ -13,15 +13,14 @@ class Map:
             self.tiles_dictionary={}
 
     def __getitem__(self, item: Vector2d) -> Cell:
-        print(item // 10, item % 10)
-        print(10 // 10, 10 % 10)
-        return self.tiles_dictionary[item // 10].cells_dict[item % 10]
+        return self.tiles_dictionary[Vector2d(item.x // 10, item.y // 10)].cells_dict[Vector2d(item.x % 10, item.y % 10)]
 
     def move(self):
         ...
 
     def generate_demo(self):
-        size = 0 # Define the size of the map
+        size = 2
+
         for x in range(-size, size + 1):
             for y in range(-size, size + 1):
                 tile = Tile(Vector2d(x, y), {})
