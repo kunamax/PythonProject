@@ -1,4 +1,4 @@
-class HeroOnMap:
+class Hero:
     def __init__(self, initial_position):
         self.position = initial_position
 

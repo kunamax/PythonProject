@@ -1,6 +1,6 @@
 from Application.Map._map import Map
 from Application.Map._wall import WallType
-from Application.Map._heroOnMap import HeroOnMap
+from Application.Map.Entities import Hero
 from Utility import Vector2d
 
 
@@ -10,10 +10,6 @@ class GameEngine:
         self.hero_position = Vector2d(0, 0)
         self.map.generate_demo()
         print(self.map[Vector2d(9, 9)].wall.type)
-
-        starting_tile = self.map.tiles_dictionary[self.hero_position // 10]
-        starting_cell = starting_tile.cells_dict[self.hero_position % 10]
-        starting_cell.entities.append(HeroOnMap(self.hero_position))
 
     def get_map(self):
         return self.map
@@ -31,8 +27,8 @@ class GameEngine:
         old_cell = self.map[old_position]
         new_cell = self.map[new_position]
         if old_cell is not None and new_cell is not None and not new_cell.wall.type == WallType.FULL:
-            old_cell.entities = [entity for entity in old_cell.entities if not isinstance(entity, HeroOnMap)]
-            new_cell.entities.append(HeroOnMap(new_position))
+            old_cell.entities = [entity for entity in old_cell.entities if not isinstance(entity, Hero)]
+            new_cell.entities.append(self.map[old_position])
             self.hero_position = new_position
             return True
         return False

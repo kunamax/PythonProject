@@ -6,7 +6,6 @@ from Map.Entities.Items import Weapon
 from _button import Button
 from GameEngine import GameEngine
 from Application.Map import WallType
-from Application.Map import HeroOnMap
 from Utility import Vector2d, Directions
 from Items import Deck
 
@@ -22,6 +21,8 @@ class Game:
         self.hero = None
         self.deck = Deck()
         self.deck.generate_cards(5)
+        self.selected_card_index = None
+        self.placing_card = False
         self.images = {}
 
         self.wall_texture = pygame.image.load("Resources/wall.jpg")
@@ -81,6 +82,25 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                for i, card in enumerate(self.deck.cards):
+                    row = i // 2
+                    col = i % 2
+                    x = 800 + col * 100
+                    y = 300 + row * 50
+                    card_rect = pygame.Rect(x, y, 100, 50)
+                    if card_rect.collidepoint(mouse_pos):
+                        print(f"Card {i} clicked")
+                        self.selected_card_index = i
+                        self.placing_card = True
+                        return
+                if self.selected_card_index is not None and self.placing_card:
+                    map_pos = Vector2d(mouse_pos[0] // self.scale, mouse_pos[1] // self.scale)
+                    selected_card = self.deck.cards[self.selected_card_index]
+                    self.game_engine.get_map()[map_pos].wall.type = selected_card.wall.type
+                    self.game_engine.get_map()[map_pos].wall.facing = selected_card.wall.facing
+                    self.selected_card_index = None
+                    self.placing_card = False
                 if self.pause_button.is_clicked(event):
                     if self.paused:
                         self.paused = False
@@ -111,7 +131,6 @@ class Game:
                 new_cell = self.game_engine.get_map()[new_position]
                 print(self.game_engine.get_map()[new_position].wall.type)
                 if new_cell is not None and not new_cell.wall.type == WallType.FULL:
-                    print(self.game_engine.update_map(self.hero_position, new_position))
                     if self.game_engine.update_map(self.hero_position, new_position):
                         self.hero_position = new_position
 
@@ -148,15 +167,20 @@ class Game:
                     self.screen.blit(
                         pygame.transform.scale(self.wall_texture, (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
+                elif cell.wall.type == WallType.HALF:
+                    image = self.images[cell.wall.type][cell.wall.facing]
+                    self.screen.blit(
+                        pygame.transform.scale(image, (self.scale // scale, self.scale // scale)),
+                        (x * self.scale, y * self.scale))
                 elif cell.wall.type == WallType.EMPTY:
                     self.screen.blit(
                         pygame.transform.scale(self.floor_texture, (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
-                if any(isinstance(entity, HeroOnMap) for entity in cell.entities):
+                if any(isinstance(entity, Hero) for entity in cell.entities):
                     self.screen.blit(
                         pygame.transform.scale(self.hero_texture, (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
-        if not any(isinstance(entity, HeroOnMap) for entity in map[self.hero_position].entities):
+        if not any(isinstance(entity, Hero) for entity in map[self.hero_position].entities):
             x, y = (self.hero_position.x) / scale, (self.hero_position.y) / scale
             self.screen.blit(
                 pygame.transform.scale(self.hero_texture, (self.scale // scale, self.scale // scale)),
@@ -191,40 +215,23 @@ class Game:
             self.hero.use_item(potion)
 
     def draw_cards(self):
+        cards_per_row = 2
+        card_width, card_height = 100, 50
+        start_x, start_y = 800, 300
+
+        pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(800, 300, 200, len(self.deck.cards) * 100))
+
         for i, card in enumerate(self.deck.cards):
             if card.wall.type == WallType.HALF:
+                row = i // cards_per_row
+                col = i % cards_per_row
+                x = start_x + col * card_width
+                y = start_y + row * card_height
                 image = self.images[card.wall.type][card.wall.facing]
-                self.screen.blit(image, (700, 50 + i * 100))
-
-    def get_tiles_between(self, old_position, new_position):
-        tiles = []
-        x0, y0 = old_position.x, old_position.y
-        x1, y1 = new_position.x, new_position.y
-        dx = abs(x1 - x0)
-        dy = abs(y1 - y0)
-        x, y = x0, y0
-        sx = -1 if x0 > x1 else 1
-        sy = -1 if y0 > y1 else 1
-        if dx > dy:
-            err = dx / 2.0
-            while x != x1:
-                tiles.append(Vector2d(x, y))
-                err -= dy
-                if err < 0:
-                    y += sy
-                    err += dx
-                x += sx
-        else:
-            err = dy / 2.0
-            while y != y1:
-                tiles.append(Vector2d(x, y))
-                err -= dx
-                if err < 0:
-                    x += sx
-                    err += dy
-                y += sy
-        tiles.append(Vector2d(x, y))
-        return tiles
+                scaled_image = pygame.transform.scale(image, (card_width, card_height))
+                if i == self.selected_card_index:
+                    pygame.draw.rect(self.screen, (255, 0, 0), (x, y, card_width, card_height), 3)
+                self.screen.blit(scaled_image, (x, y))
 
 
 
