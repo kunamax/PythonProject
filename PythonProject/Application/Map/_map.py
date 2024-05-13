@@ -5,6 +5,7 @@ from ._cell import Cell
 from ._wall import Wall, WallType
 import random
 from Entities import Entity
+from Entities import Hero
 
 class Map:
     def __init__(self, tiles_dictionary: dict[Vector2d, Tile]=None):
@@ -26,11 +27,20 @@ class Map:
     def _move(self)->None:
         for ent in self.entities_list:
             self._move_entity(ent)
+            if self[ent.position].shop_item!=None and type(ent)==Hero and ent.money>=self[ent.position].shop_item.price:
+                ent.add_item(self[ent.position].shop_item.item)
+                ent.money-=self[ent.position].shop_item.price
+                self[ent.position].shop_item=None
+
+
     def _attack(self)->None:
         for ent in self.entities_list:
             for position in ent.attack():
                 for damaged_ent in self[position].entities:
                     damaged_ent.take_damage(ent.weapon.damage)
+                    if not damaged_ent.alive:
+                        ent.money+=damaged_ent.money
+                        self.entities_list.pop(self.entities_list.index(damaged_ent))
     def _move_entity(self,entity:Entity):
         entity.move_index = (entity.move_index + 1) % len(entity.list_of_moves)
         next_cell_vector_candodate = entity.position + entity.current_direction.rotate_vector(entity.list_of_moves[entity.move_index].to_vector2d())

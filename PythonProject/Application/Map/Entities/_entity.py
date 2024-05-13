@@ -12,6 +12,7 @@ class Entity(abc):
         self.current_health = max_health
         self.max_health = max_health
         self.current_direction = direction
+        self.money:int=0
         self.weapon = weapon
         self.alive = True
         self.on_wall = False
