@@ -2,17 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1fe2bd94-136e-48f2-8920-9056b3320c22" name="Changes" comment="works but i'm not sure about cleanliness of code">
-      <change afterPath="$PROJECT_DIR$/PythonProject/test_inplememtaion.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Entities/Enemy.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Entities/Enemy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Entities/Entity.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Entities/Entity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Entities/Hero.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Entities/Hero.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Entities/Trap.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Entities/Trap.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Items/Weapon.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Items/Weapon.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Map/Cell.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Map/Cell.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Map/Map.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Map/Map.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Utility/Directions.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Utility/Directions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Utility/Vector2d.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Utility/Vector2d.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/_entity.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/_entity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/_cell.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_cell.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/_map.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_map.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
