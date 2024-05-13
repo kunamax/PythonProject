@@ -1,4 +1,4 @@
-from Map import Map
+from Application.Map import Map
 from Entities import Hero
 from Items import Weapon
 from Items import Armor

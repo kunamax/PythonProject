@@ -13,23 +13,28 @@ class Map:
             self.tiles_dictionary={}
 
     def __getitem__(self, item: Vector2d) -> Cell:
-        return self.tiles_dictionary[item // 10][item % 10]
+        print(item // 10, item % 10)
+        print(10 // 10, 10 % 10)
+        return self.tiles_dictionary[item // 10].cells_dict[item % 10]
 
     def move(self):
         ...
 
     def generate_demo(self):
-        size = 10  # Define the size of the map
+        size = 0 # Define the size of the map
         for x in range(-size, size + 1):
             for y in range(-size, size + 1):
                 tile = Tile(Vector2d(x, y), {})
                 for i in range(10):
                     for j in range(10):
-                        if random.choice([True, False]):  # Randomly decide if the cell is a wall
+                        if random.choices([True, False], [0.3, 0.7])[0]:
                             tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(1), Directions(0)), [])
                         else:
                             tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(0), Directions(0)), [])
                 self.tiles_dictionary[Vector2d(x, y)] = tile
+
+
+
 
         # self.tiles_dictionary[Vector2d(0, 0)].generate_demo_cross()
         #

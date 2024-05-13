@@ -1,7 +1,7 @@
 from abc import ABC as abc
 from Utility import Vector2d
 from Utility import Directions
-from Map._wall import Wall, WallType
+from Application.Map._wall import WallType
 from Items import Weapon
 class Entity(abc):
     def __init__(self, initiative: int, position: Vector2d, list_of_moves: list[Directions],
