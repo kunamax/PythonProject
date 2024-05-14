@@ -1,4 +1,4 @@
-from Utility import Vector2d
+from ..Utility import Vector2d
 from Utility import Directions
 from ._tile import Tile
 from ._cell import Cell
@@ -27,6 +27,7 @@ class Map:
     def _move(self)->None:
         for ent in self.entities_list:
             self._move_entity(ent)
+            #buy
             if self[ent.position].shop_item!=None and type(ent)==Hero and ent.money>=self[ent.position].shop_item.price:
                 ent.add_item(self[ent.position].shop_item.item)
                 ent.money-=self[ent.position].shop_item.price
@@ -41,7 +42,8 @@ class Map:
                     if not damaged_ent.alive:
                         ent.money+=damaged_ent.money
                         self.entities_list.pop(self.entities_list.index(damaged_ent))
-    def _move_entity(self,entity:Entity):
+                        self[position].entities.pop(self[position].entities.index(damaged_ent))
+    def _move_entity(self,entity:Entity)->None:
         entity.move_index = (entity.move_index + 1) % len(entity.list_of_moves)
         next_cell_vector_candodate = entity.position + entity.current_direction.rotate_vector(entity.list_of_moves[entity.move_index].to_vector2d())
         next_wall = self[next_cell_vector_candodate].wall
@@ -92,7 +94,7 @@ class Map:
         entity.position=next_cell_vector
         self[entity.position].entities.append(entity)
 
-    def generate_demo(self):
+    def generate_demo(self)->None:
         size = 2
 
         for x in range(-size, size + 1):

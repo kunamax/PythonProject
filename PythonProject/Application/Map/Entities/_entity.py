@@ -2,6 +2,7 @@ from abc import ABC as abc
 from .Items.Utility import Vector2d
 from .Items.Utility import Directions
 from .Items import Weapon
+from random import randint
 class Entity(abc):
     def __init__(self, initiative: int, position: Vector2d, list_of_moves: list[Directions],
                  max_health: int, direction: Directions, weapon: Weapon):
@@ -12,7 +13,7 @@ class Entity(abc):
         self.current_health = max_health
         self.max_health = max_health
         self.current_direction = direction
-        self.money:int=0
+        self.money:int=randint(2,5)
         self.weapon = weapon
         self.alive = True
         self.on_wall = False
