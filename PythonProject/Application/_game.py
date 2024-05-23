@@ -95,12 +95,14 @@ class Game:
                         self.placing_card = True
                         return
                 if self.selected_card_index is not None and self.placing_card:
-                    map_pos = Vector2d(mouse_pos[0] // self.scale, mouse_pos[1] // self.scale)
-                    selected_card = self.deck.cards[self.selected_card_index]
-                    self.game_engine.get_map()[map_pos].wall.type = selected_card.wall.type
-                    self.game_engine.get_map()[map_pos].wall.facing = selected_card.wall.facing
-                    self.selected_card_index = None
-                    self.placing_card = False
+                    tile_size = 33
+                    map_pos = Vector2d(mouse_pos[0] // tile_size, mouse_pos[1] // tile_size)
+                    if self.game_engine.get_map()[map_pos].wall.type == WallType.EMPTY:
+                        selected_card = self.deck.cards[self.selected_card_index]
+                        self.game_engine.get_map()[map_pos].wall.type = selected_card.wall.type
+                        self.game_engine.get_map()[map_pos].wall.facing = selected_card.wall.facing
+                        self.selected_card_index = None
+                        self.placing_card = False
                 if self.pause_button.is_clicked(event):
                     if self.paused:
                         self.paused = False
