@@ -14,6 +14,7 @@ class Hero(Entity):
         self.initiative = initiative
         self.armor = armor
         self.inventory = []
+        self.money:int=0
         self.alive = True
 
     def add_item(self, item)->None:
