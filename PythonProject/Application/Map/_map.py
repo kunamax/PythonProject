@@ -1,6 +1,5 @@
 from Utility import Vector2d
 from Utility import Directions
-#from Entities import Entity
 from ._tile import Tile
 from ._cell import Cell
 from ._wall import Wall, WallType
@@ -17,9 +16,13 @@ class Map:
         return self.tiles_dictionary[Vector2d(item.x // 10, item.y // 10)].cells_dict[Vector2d(item.x % 10, item.y % 10)]
 
 
-    def move(self,entity:Entity):
+    def move(self,entity):
         entity.move_index = (entity.move_index + 1) % len(entity.list_of_moves)
-        next_cell_vector_candodate = entity.position + entity.current_direction.rotate_vector(entity.list_of_moves[entity.move_index].to_vector2d())
+        #next_cell_vector_candodate = entity.position + entity.current_direction.rotate_vector(entity.list_of_moves[entity.move_index].to_vector2d())
+        if entity.current_direction == Directions.NORTH or entity.current_direction == Directions.SOUTH:
+            next_cell_vector_candodate = entity.position + entity.current_direction.opposite.to_vector2d()
+        else:
+            next_cell_vector_candodate = entity.position + entity.current_direction.to_vector2d()
         next_wall = self[next_cell_vector_candodate].wall
         next_cell_vector = None
 
@@ -64,6 +67,7 @@ class Map:
                         or abs(entity.current_direction.to_int() - next_wall.facing.to_int())==7):
                 entity.current_direction = entity._handle_bouncle(entity.current_direction, next_wall.facing)
 
+        print(entity.position, "position")
         self[entity.position].entities.pop( self[entity.position].entities.index(entity))
         entity.position=next_cell_vector
         self[entity.position].entities.append(entity)
@@ -76,13 +80,13 @@ class Map:
                 tile = Tile(Vector2d(x, y), {})
                 for i in range(10):
                     for j in range(10):
-                        if random.choices([True, False], [0.3, 0.7])[0]:
+                        if random.choices([True, False], [0.3, 0.7])[0] and not (i == 0 and j == 0):
                             tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(1), Directions(0)), [])
+                        elif i == 0 and j == 0:
+                            tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(0), Directions(0)), [])
                         else:
                             tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(0), Directions(0)), [])
                 self.tiles_dictionary[Vector2d(x, y)] = tile
-
-
 
 
         # self.tiles_dictionary[Vector2d(0, 0)].generate_demo_cross()
