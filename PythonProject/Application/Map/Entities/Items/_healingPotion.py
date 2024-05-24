@@ -7,3 +7,4 @@ class HealingPotion(Item):
 
     def use(self, hero):
         hero.heal(self.heal_amount)
+        hero.inventory.remove(self)

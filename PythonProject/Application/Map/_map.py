@@ -1,11 +1,11 @@
-from ..Utility import Vector2d
-from Utility import Directions
+from Utility import *
 from ._tile import Tile
 from ._cell import Cell
 from ._wall import Wall, WallType
 import random
-from Entities import Entity
-from Entities import Hero
+from Application.Map.Entities import Entity
+from Application.Map.Entities import Hero
+from Application.Map.Entities import Skeleton
 
 class Map:
     def __init__(self, tiles_dictionary: dict[Vector2d, Tile]=None):
@@ -16,7 +16,7 @@ class Map:
 
     def __getitem__(self, item: Vector2d) -> Cell:
         return self.tiles_dictionary[Vector2d(item.x // 10, item.y // 10)].cells_dict[Vector2d(item.x % 10, item.y % 10)]
-    
+
     def add_entity(self,entity:Entity)->None:
         self.entities_list.append(entity)
         self[entity.position].entities.append(entity)
@@ -24,7 +24,7 @@ class Map:
     def perform_turn(self)->None:
         self._move()
         self._attack()
-        
+
     def _move(self)->None:
         for ent in self.entities_list:
             self._move_entity(ent)
@@ -37,14 +37,25 @@ class Map:
 
     def _attack(self)->None:
         for ent in self.entities_list:
+            if not ent.interaction:
+                break
             for position in ent.attack():
                 for damaged_ent in self[position].entities:
+                    if not damaged_ent.interaction:
+                        break
                     damaged_ent.take_damage(ent.weapon.damage)
                     if not damaged_ent.alive:
+                        print("Died")
                         ent.money+=damaged_ent.money
                         self.entities_list.pop(self.entities_list.index(damaged_ent))
                         self[position].entities.pop(self[position].entities.index(damaged_ent))
+                        skeleton = Skeleton("Dedek", position, Directions.NORTH)
+                        self.entities_list.append(skeleton)
+                        self[position].entities.append(skeleton)
+
     def _move_entity(self,entity:Entity)->None:
+        if not entity.list_of_moves:
+            return
         #next_cell_vector_candodate = entity.position + entity.current_direction.rotate_vector(entity.list_of_moves[entity.move_index].to_vector2d())
         if entity.current_direction == Directions.NORTH or entity.current_direction == Directions.SOUTH:
             next_cell_vector_candodate = entity.position + entity.current_direction.opposite.to_vector2d()

@@ -28,6 +28,11 @@ class Hero(Entity):
             if isinstance(item, Armor) and self.armor == item:
                 self.armor = None
 
+    def heal(self, heal_amount):
+        self.current_health += heal_amount
+        if self.current_health > self.max_health:
+            self.current_health = self.max_health
+
     def use_item(self, item)->None:
         if item in self.inventory:
             item.use(self)

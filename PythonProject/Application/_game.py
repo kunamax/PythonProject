@@ -1,10 +1,13 @@
 import pygame
-from Entities import *
+
+from Application.Map.Entities import Skeleton as Skel
+from Application.Map.Entities import *
+from Application.Map.Entities.Items import *
 from Map.Entities.Items import HealingPotion
 from Map.Entities.Items import Armor
 from Map.Entities.Items import Weapon
 from _button import Button
-from GameEngine import GameEngine
+from _gameEngine import GameEngine
 from Application.Map import WallType
 from Utility import Vector2d, Directions
 from Items import Deck
@@ -28,12 +31,13 @@ class Game:
         self.deck = Deck()
         self.deck.generate_cards(5)
         self.selected_card_index = None
+        self.selected_potion_index = None
+        self.selected_equipment_index = None
         self.placing_card = False
         self.images = {}
         self.move_counter = 0
         self.offset_x = 4
         self.offset_y = 4
-
 
         self.wall_texture = pygame.image.load("Resources/wall.jpg")
         self.floor_texture = pygame.image.load("Resources/floor.jpg")
@@ -41,13 +45,26 @@ class Game:
         self.enemy_texture = pygame.image.load("Resources/enemy.png")
         self.trap_texture = pygame.image.load("Resources/trap.png")
         self.skeleton_texture = pygame.image.load("Resources/skeleton.png")
+        self.red_arrow_texture = pygame.image.load("Resources/red_arrow.png")
         self.half_wall1_texture = pygame.image.load("Resources/half_wall1.png")
         self.half_wall2_texture = pygame.image.load("Resources/half_wall2.png")
+        self.healing_potion_texture = pygame.image.load("Resources/healing_potion.png")
+        self.mana_potion_texture = pygame.image.load("Resources/mana_potion.png")
+        self.sword_texture = pygame.image.load("Resources/sword.png")
+        self.armour_texture = pygame.image.load("Resources/armour.png")
         self.wall_texture = pygame.transform.scale(self.wall_texture, (self.scale, self.scale))
         self.floor_texture = pygame.transform.scale(self.floor_texture, (self.scale, self.scale))
         self.hero_texture = pygame.transform.scale(self.hero_texture, (self.scale, self.scale))
         self.half_wall1_texture = pygame.transform.scale(self.half_wall1_texture, (self.scale, self.scale))
         self.half_wall2_texture = pygame.transform.scale(self.half_wall2_texture, (self.scale, self.scale))
+        self.enemy_texture = pygame.transform.scale(self.enemy_texture, (self.scale, self.scale))
+        self.trap_texture = pygame.transform.scale(self.trap_texture, (self.scale, self.scale))
+        self.skeleton_texture = pygame.transform.scale(self.skeleton_texture, (self.scale, self.scale))
+        self.red_arrow_texture = pygame.transform.scale(self.red_arrow_texture, (self.scale, self.scale))
+        self.healing_potion_texture = pygame.transform.scale(self.healing_potion_texture, (self.scale, self.scale))
+        self.mana_potion_texture = pygame.transform.scale(self.mana_potion_texture, (self.scale, self.scale))
+        self.sword_texture = pygame.transform.scale(self.sword_texture, (self.scale, self.scale))
+        self.armour_texture = pygame.transform.scale(self.armour_texture, (self.scale, self.scale))
 
         self.images = {
             WallType.HALF: {
@@ -66,8 +83,7 @@ class Game:
         self.quit_button = Button(800, 100, 200, 100, "Quit Game")
         self.reset_button = Button(800, 200, 200, 100, "Reset Game")
         self.resume_button = Button(500, 350, 200, 100, "Resume Game")
-        self.attack_button = Button(1000, 0, 200, 100, "Attack")
-        self.potion_button = Button(1000, 100, 200, 100, "Use Potion")
+        self.potion_button = Button(1000, 0, 200, 100, "Use Potion")
 
         self.game_engine = GameEngine()
         self.hero_position = Vector2d(0, 0)
@@ -81,19 +97,29 @@ class Game:
         max_health = 100
         direction = Directions.SOUTH
         self.create_character("Hero", 1, weapon, armor, position, list_of_moves, max_health, direction)
-        self.game_engine.set_hero_position(self.hero_position, self.hero)
+        self.game_engine.map.add_entity(self.hero)
+        healing_potion = HealingPotion("Healing Potion", "A potion that heals you", 10, 5)
+        mana_potion = ManaPotion("Mana Potion", "A potion that restores mana", 10, 5)
+        self.hero.add_item(healing_potion)
+        self.hero.add_item(mana_potion)
+        self.hero.add_item(healing_potion)
+        self.hero.add_item(mana_potion)
+        self.hero.inventory.append(weapon)
+        self.hero.inventory.append(armor)
 
-        self.create_trap("Trap", 1, Vector2d(2, 2), [], 10, Directions.NORTH, weapon)
-        self.game_engine.set_trap_position(Vector2d(2, 2), self.traps[0])
+        trap = Trap(1, Vector2d(2, 2), [], 10, Directions.NORTH, weapon)
+        self.game_engine.map.add_entity(trap)
+        self.traps.append(trap)
 
         weapon = Weapon("Claws", "Sharp claws", 10, 5, [Vector2d(0, 1), Vector2d(1, 1),
                                                         Vector2d(-1, 1), Vector2d(0, 2)])
-        enemy_position = Vector2d(5, 5)
+        enemy_position = Vector2d(0, 2)
         enemy_list_of_moves = [Directions.NORTH]
-        enemy_max_health = 50
-        enemy_direction = Directions.NORTH
-        self.create_enemy("Enemy", 1, weapon, enemy_position, enemy_list_of_moves, enemy_max_health, enemy_direction)
-        self.game_engine.set_enemy_position(enemy_position, self.enemies[0])
+        enemy_max_health = 5
+        enemy_direction = Directions.SOUTH
+        enemy = Enemy(1, enemy_position, enemy_list_of_moves, enemy_max_health, enemy_direction, weapon)
+        self.game_engine.map.add_entity(enemy)
+        self.enemies.append(enemy)
 
         self.equip_weapon(weapon)
         self.equip_armor(armor)
@@ -123,15 +149,48 @@ class Game:
                         self.selected_card_index = i
                         self.placing_card = True
                         return
+                potions_per_row = 2
+                potion_width, potion_height = 100, 50
+                start_x, start_y = 1000, 250
+                print(self.hero.inventory)
+                for i, item in enumerate(self.hero.inventory):
+                    if isinstance(item, HealingPotion) or isinstance(item, ManaPotion):
+                        row = i // potions_per_row
+                        col = i % potions_per_row
+                        x = start_x + col * potion_width
+                        y = start_y + row * potion_height
+                        print(x, y)
+                        potion_rect = pygame.Rect(x, y, potion_width, potion_height)
+                        if potion_rect.collidepoint(mouse_pos):
+                            print(f"Potion {i} clicked")
+                            self.selected_potion_index = i
+                            return
+                equipment_per_row = 2
+                equipment_width, equipment_height = 100, 50
+                start_x, start_y = 1000, 400
+                for i, item in enumerate(self.hero.inventory):
+                    if isinstance(item, Weapon) or isinstance(item, Armor):
+                        row = i // equipment_per_row
+                        col = i % equipment_per_row
+                        x = start_x + col * equipment_width
+                        y = start_y + row * equipment_height
+                        print(x, y)
+                        equipment_rect = pygame.Rect(x, y, equipment_width, equipment_height)
+                        if equipment_rect.collidepoint(mouse_pos):
+                            print(f"Equipment {i} clicked")
+                            self.selected_equipment_index = i
+                            return
+
+
                 if self.selected_card_index is not None and self.placing_card:
                     tile_size = 33
                     map_pos = Vector2d(mouse_pos[0] // tile_size,
                                        mouse_pos[1] // tile_size)
-                    if self.game_engine.get_map()[map_pos].wall.type == WallType.EMPTY and self.game_engine.get_map()[map_pos].entities == []:
+                    if self.game_engine.map[map_pos].wall.type == WallType.EMPTY and self.game_engine.map[map_pos].entities == []:
                         selected_card = self.deck.cards[self.selected_card_index]
                         print(selected_card.wall.type, selected_card.wall.facing)
-                        self.game_engine.get_map()[map_pos].wall.type = selected_card.wall.type
-                        self.game_engine.get_map()[map_pos].wall.facing = selected_card.wall.facing
+                        self.game_engine.map[map_pos].wall.type = selected_card.wall.type
+                        self.game_engine.map[map_pos].wall.facing = selected_card.wall.facing
                         self.selected_card_index = None
                         self.placing_card = False
                 if self.pause_button.is_clicked(event):
@@ -148,25 +207,21 @@ class Game:
                     self.hero.position = Vector2d(0, 0)
                     self.hero.current_direction = Directions.SOUTH
                     for enemy in self.enemies:
-                        enemy.position = Vector2d(5, 5)
-                        self.game_engine.set_enemy_position(enemy.position, enemy)
+                        enemy.position = Vector2d(0, 2)
+                        self.game_engine.map.add_entity(enemy)
                     for trap in self.traps:
                         trap.position = Vector2d(2, 2)
-                        self.game_engine.set_trap_position(trap.position, trap)
-                    self.game_engine.set_hero_position(self.hero_position, self.hero)
-                    print(self.game_engine.get_map()[self.hero_position].entities)
+                        self.game_engine.map.add_entity(trap)
+                    self.game_engine.map.add_entity(self.hero)
                     self.deck.generate_cards(5)
                 elif self.resume_button.is_clicked(event):
                     self.paused = False
-                elif self.attack_button.is_clicked(event):
-                    print(self.enemies[0].current_health)
-                    the_dead = self.hero.attack(self.game_engine.map)
-                    if len(the_dead) > 0:
-                        for entity in the_dead:
-                            self.game_engine.map[entity.position].entities.pop(
-                                self.game_engine.map[entity.position].entities.index(entity))
-                            self.game_engine.map[entity.position].entities.append(Skeleton("Dedek", entity.position, Directions.NORTH))
-                    print(self.enemies[0].current_health)
+                elif self.potion_button.is_clicked(event):
+                    if self.selected_potion_index is not None:
+                        selected_potion = self.hero.inventory[self.selected_potion_index]
+                        self.use_potion(selected_potion)
+                        self.selected_potion_index = None
+
 
             elif event.type == pygame.KEYDOWN:
                 print(self.hero.current_direction)
@@ -175,18 +230,23 @@ class Game:
                     self.hero.list_of_moves = [Directions.SOUTH] * 5
                     for enemy in self.enemies:
                         enemy.list_of_moves = [Directions.NORTH] * 5
+                elif event.key == pygame.K_UP:
+                    self.hero.current_direction = Directions.NORTH
+                elif event.key == pygame.K_DOWN:
+                    self.hero.current_direction = Directions.SOUTH
+                elif event.key == pygame.K_LEFT:
+                    self.hero.current_direction = Directions.WEST
+                elif event.key == pygame.K_RIGHT:
+                    self.hero.current_direction = Directions.EAST
 
     def update(self):
         if self.hero.list_of_moves:
-            self.game_engine.map.move(self.hero)
+            self.game_engine.map.perform_turn()
             self.move_counter += 1
             if self.move_counter == 5:
                 self.hero.list_of_moves = []
         for enemy in self.enemies:
-            if enemy.list_of_moves and enemy.alive:
-                self.game_engine.map.move(enemy)
-                self.draw()
-                pygame.display.flip()
+            if enemy.list_of_moves:
                 enemy.list_of_moves.pop(0)
     def draw_pause_screen(self):
         overlay = pygame.Surface((self.window_rex_x, self.window_rex_y))
@@ -202,15 +262,16 @@ class Game:
         else:
             self.draw_map()
             self.draw_cards()
+            self.draw_potions()
+            self.draw_equipment()
             self.pause_button.draw(self.screen)
             self.quit_button.draw(self.screen)
             self.reset_button.draw(self.screen)
-            self.attack_button.draw(self.screen)
             self.potion_button.draw(self.screen)
         pygame.display.flip()
 
     def draw_map(self):
-        map = self.game_engine.get_map()
+        map = self.game_engine.map
         scale = 3
         for tile_position, tile in map.tiles_dictionary.items():
             for cell_position, cell in tile.cells_dict.items():
@@ -232,7 +293,37 @@ class Game:
                     self.screen.blit(
                         pygame.transform.scale(self.floor_texture, (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
+                if any(isinstance(entity, Skel) for entity in cell.entities):
+                    self.screen.blit(
+                        pygame.transform.scale(self.skeleton_texture, (self.scale // scale, self.scale // scale)),
+                        (x * self.scale, y * self.scale))
                 if any(isinstance(entity, Hero) for entity in cell.entities):
+                    arrow_x = x
+                    arrow_y = y
+                    if self.hero.current_direction == Directions.NORTH:
+                        arrow_y -= 1
+                        image_rotated = pygame.transform.rotate(self.red_arrow_texture, 90)
+                        self.screen.blit(
+                            pygame.transform.scale(image_rotated, (self.scale // scale, self.scale // scale)),
+                            (x * self.scale, y * self.scale))
+                    elif self.hero.current_direction == Directions.SOUTH:
+                        arrow_y += 1
+                        image_rotated = pygame.transform.rotate(self.red_arrow_texture, 270)
+                        self.screen.blit(
+                            pygame.transform.scale(image_rotated, (self.scale // scale, self.scale // scale)),
+                            (x * self.scale, y * self.scale))
+                    elif self.hero.current_direction == Directions.WEST:
+                        arrow_x -= 1
+                        image_rotated = pygame.transform.rotate(self.red_arrow_texture, 180)
+                        self.screen.blit(
+                            pygame.transform.scale(image_rotated, (self.scale // scale, self.scale // scale)),
+                            (x * self.scale, y * self.scale))
+                    elif self.hero.current_direction == Directions.EAST:
+                        arrow_x += 1
+                        image_rotated = pygame.transform.rotate(self.red_arrow_texture, 0)
+                        self.screen.blit(
+                            pygame.transform.scale(image_rotated, (self.scale // scale, self.scale // scale)),
+                            (x * self.scale, y * self.scale))
                     self.screen.blit(
                         pygame.transform.scale(self.hero_texture, (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
@@ -244,10 +335,6 @@ class Game:
                     self.screen.blit(
                         pygame.transform.scale(self.trap_texture, (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
-                if any(isinstance(entity, Skeleton) for entity in cell.entities):
-                    self.screen.blit(
-                        pygame.transform.scale(self.skeleton_texture, (self.scale // scale, self.scale // scale)),
-                        (x * self.scale, y * self.scale))
 
     def add_item(self, item):
         if self.hero:
@@ -257,17 +344,6 @@ class Game:
         self.hero = Hero(initiative, weapon, armor, position, list_of_moves, max_health, name, direction)
         self.hero.add_item(weapon)
         self.hero.add_item(armor)
-
-    def create_enemy(self, name, initiative, weapon, position, list_of_moves, max_health, direction):
-        enemy = Enemy(initiative, position, list_of_moves, max_health, direction, weapon)
-        self.enemies.append(enemy)
-
-    def create_trap(self, name, initiative, position, list_of_moves, max_health, direction, weapon):
-        trap = Trap(initiative, position, list_of_moves, max_health, direction, weapon)
-        self.traps.append(trap)
-
-    def set_position(self, position):
-        self.hero.position = position
 
     def create_item(self, item_class, *args):
         item = item_class(*args)
@@ -282,7 +358,6 @@ class Game:
             self.hero.equip_armor(armor)
 
     def use_potion(self, potion):
-        if self.hero and isinstance(potion, HealingPotion):
             self.hero.use_item(potion)
 
     def draw_cards(self):
@@ -301,9 +376,47 @@ class Game:
                 image = self.images[card.wall.type][card.wall.facing]
                 scaled_image = pygame.transform.scale(image, (card_width, card_height))
                 if i == self.selected_card_index:
-                    pygame.draw.rect(self.screen, (255, 0, 0), (x, y, card_width, card_height), 3)
+                    pygame.draw.rect(self.screen, (0, 255, 0), (x, y, card_width, card_height), 3)
                 self.screen.blit(scaled_image, (x, y))
 
+    def draw_potions(self):
+        potions_per_row = 2
+        potion_width, potion_height = 100, 50
+        start_x, start_y = 1000, 250
+
+        for i, item in enumerate(self.hero.inventory):
+            row = i // potions_per_row
+            col = i % potions_per_row
+            x = start_x + col * potion_width
+            y = start_y + row * potion_height
+            if isinstance(item, HealingPotion):
+                scaled_image = pygame.transform.scale(self.healing_potion_texture, (potion_width, potion_height))
+                self.screen.blit(scaled_image, (x, y))
+            if isinstance(item, ManaPotion):
+                scaled_image = pygame.transform.scale(self.mana_potion_texture, (potion_width, potion_height))
+                self.screen.blit(scaled_image, (x, y))
+            if i == self.selected_potion_index:
+                pygame.draw.rect(self.screen, (0, 255, 0), (x, y, potion_width, potion_height), 3)
+
+    def draw_equipment(self):
+        equipment_per_row = 2
+        equipment_width, equipment_height = 100, 50
+        start_x, start_y = 1000, 400
+
+        for i, item in enumerate(self.hero.inventory):
+            row = i // equipment_per_row
+            col = i % equipment_per_row
+            x = start_x + col * equipment_width
+            y = start_y + row * equipment_height
+            if isinstance(item, Weapon):
+                scaled_image = pygame.transform.scale(self.sword_texture, (equipment_width, equipment_height))
+                self.screen.blit(scaled_image, (x, y))
+            if isinstance(item, Armor):
+                scaled_image = pygame.transform.scale(self.armour_texture, (equipment_width, equipment_height))
+                self.screen.blit(scaled_image, (x, y))
+
+            if i == self.selected_equipment_index:
+                pygame.draw.rect(self.screen, (0, 255, 0), (x, y, equipment_width, equipment_height), 3)
 
 
 if __name__ == "__main__":

@@ -17,6 +17,7 @@ class Entity(abc):
         self.weapon = weapon
         self.alive = True
         self.on_wall = False
+        self.interaction = True
 
     def _handle_bouncle(self,e_facing:Directions,w_facing:Directions)->Directions:
         tmp=e_facing.opposite.to_int()-w_facing.to_int()

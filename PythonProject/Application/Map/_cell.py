@@ -1,6 +1,6 @@
 from .Entities import Entity
 from ._wall import Wall
-from Entities.Items import ShopItem
+from Items import ShopItem
 class Cell:
     def __init__(self,wall:Wall,entities:list[Entity],shop_item:ShopItem=None):
     # shop_item=Null:ShopItem do sprawdzenia

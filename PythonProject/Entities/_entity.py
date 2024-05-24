@@ -4,6 +4,7 @@ from Utility import Vector2d
 from Utility import Directions
 from Application.Map._wall import WallType
 from Items import Weapon
+from random import randint
 class Entity(abc):
     def __init__(self, initiative: int, position: Vector2d, list_of_moves: list[Directions],
                  max_health: int, direction: Directions, weapon: Weapon):
@@ -14,9 +15,11 @@ class Entity(abc):
         self.current_health = max_health
         self.max_health = max_health
         self.current_direction = direction
+        self.money:int=randint(2,5)
         self.weapon = weapon
         self.alive = True
         self.on_wall = False
+        self.interaction = True
 
     def move(self, map):
         # predict next vector
@@ -75,18 +78,10 @@ class Entity(abc):
         tmp=e_facing.opposite.to_int()-w_facing.to_int()
         return Directions( (w_facing.to_int()-tmp)%8 )
 
-    def attack(self, map):
-        the_dead = []
+    def attack(self) -> list[Vector2d]:
         cells_to_attack = [self.position + self.current_direction.rotate_vector(attack) for attack in
                            self.weapon.list_of_attacks]
-        for vec in cells_to_attack:
-            for entity in map[vec].entities:
-                entity.take_damage(self.weapon.damage)
-                if not entity.alive:
-                    the_dead.append(entity)
-        return the_dead
-
-
+        return cells_to_attack
 
     def take_damage(self, damage) -> None:
         self.current_health -= damage
