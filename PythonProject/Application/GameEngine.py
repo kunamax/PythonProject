@@ -20,13 +20,20 @@ class GameEngine:
     def get_hero_position(self):
         return self.hero_position
 
-    def set_hero_position(self, new_position):
+    def set_hero_position(self, new_position, hero: Hero):
         self.hero_position = new_position
+        self.map[self.hero_position].entities.append(hero)
+
+    def set_enemy_position(self, new_position, enemy):
+        self.map[new_position].entities.append(enemy)
+
+    def set_trap_position(self, new_position, trap):
+        self.map[new_position].entities.append(trap)
 
     def update_map(self, old_position, new_position):
         old_cell = self.map[old_position]
         new_cell = self.map[new_position]
-        if old_cell is not None and new_cell is not None and not new_cell.wall.type == WallType.FULL:
+        if old_cell is not None and new_cell is not None and new_cell.wall.type == WallType.EMPTY:
             old_cell.entities = [entity for entity in old_cell.entities if not isinstance(entity, Hero)]
             new_cell.entities.append(self.map[old_position])
             self.hero_position = new_position

@@ -7,6 +7,7 @@ class Weapon(Item):
         super().__init__(name, description, weight)
         self.damage = damage
         self.equipped = False
+        self.list_of_attacks = list_of_attacks
 
     def use(self, hero):
         hero.equip_weapon(self)

@@ -1,4 +1,5 @@
 from abc import ABC as abc
+
 from Utility import Vector2d
 from Utility import Directions
 from Application.Map._wall import WallType
@@ -23,7 +24,6 @@ class Entity(abc):
         next_cell_vector_candodate = self.position + self.current_direction.rotate_vector(self.list_of_moves[self.move_index].to_vector2d())
         next_wall = map[next_cell_vector_candodate].wall
         next_cell_vector = None
-
         if self.on_wall:
             if next_wall.type == WallType.EMPTY:
                 self.on_wall = False
@@ -51,6 +51,7 @@ class Entity(abc):
                     self.current_direction=self._handle_bouncle(self.current_direction,next_wall.facing)
                     next_cell_vector = next_cell_vector_candodate
 
+
             if next_wall.type == WallType.STAIRS:
                 if next_wall.facing == self.current_direction:
                     self.on_wall = True
@@ -66,18 +67,26 @@ class Entity(abc):
                 self.current_direction = self._handle_bouncle(self.current_direction, next_wall.facing)
 
         map[self.position].entities.pop( map[self.position].entities.index(self))
+        # print(next_cell_vector, "next cell vector")
         self.position=next_cell_vector
         map[self.position].entities.append(self)
 
     def _handle_bouncle(self,e_facing:Directions,w_facing:Directions)->Directions:
         tmp=e_facing.opposite.to_int()-w_facing.to_int()
         return Directions( (w_facing.to_int()-tmp)%8 )
-    def attack(self, map) -> None:
+
+    def attack(self, map):
+        the_dead = []
         cells_to_attack = [self.position + self.current_direction.rotate_vector(attack) for attack in
                            self.weapon.list_of_attacks]
         for vec in cells_to_attack:
             for entity in map[vec].entities:
                 entity.take_damage(self.weapon.damage)
+                if not entity.alive:
+                    the_dead.append(entity)
+        return the_dead
+
+
 
     def take_damage(self, damage) -> None:
         self.current_health -= damage
