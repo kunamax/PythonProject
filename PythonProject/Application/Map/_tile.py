@@ -1,5 +1,4 @@
-from Utility import Vector2d
-from Utility import Directions
+from Application.Map.Entities.Items.Utility import Vector2d, Directions
 from ._cell import Cell
 from ._wall import Wall,WallType
 class Tile:

@@ -1,5 +1,5 @@
 from ._item import Item
-from Utility import Vector2d
+from Application.Map.Entities.Items.Utility import Vector2d
 
 
 class Weapon(Item):

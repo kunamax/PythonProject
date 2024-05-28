@@ -1,3 +1,5 @@
+import random
+
 from .Items.Utility import Directions
 from .Items.Utility import Vector2d
 from ._entity import Entity

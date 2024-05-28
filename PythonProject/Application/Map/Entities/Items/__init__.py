@@ -5,3 +5,4 @@ from ._healingPotion import  HealingPotion
 from ._shopItem import ShopItem
 from ._card import Card
 from ._manaPotion import ManaPotion
+from ._deck import Deck

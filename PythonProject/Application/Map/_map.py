@@ -1,26 +1,35 @@
-from Utility import *
 from ._tile import Tile
 from ._cell import Cell
 from ._wall import Wall, WallType
 import random
-from Application.Map.Entities import Entity
-from Application.Map.Entities import Hero
-from Application.Map.Entities import Skeleton
+from Application.Map.Entities import Entity, Hero, Skeleton, Enemy
+from Application.Map.Entities.Items.Utility import Vector2d, Directions
 
 class Map:
     def __init__(self, tiles_dictionary: dict[Vector2d, Tile]=None):
         self.tiles_dictionary = tiles_dictionary
+        self.cells_in_tile = 10
         if self.tiles_dictionary==None:
             self.tiles_dictionary={}
         self.entities_list:list[Entity]=[]
 
     def __getitem__(self, item: Vector2d) -> Cell:
-        return self.tiles_dictionary[Vector2d(item.x // 10, item.y // 10)].cells_dict[Vector2d(item.x % 10, item.y % 10)]
-
+        try:
+            return self.tiles_dictionary[Vector2d(item.x // self.cells_in_tile, item.y
+                                              // self.cells_in_tile)].cells_dict[Vector2d(item.x % self.cells_in_tile, item.y % self.cells_in_tile)]
+        except KeyError:
+            print("KeyError", item)
+            return Cell(Wall(WallType.FULL, Directions.NORTH), [])
     def add_entity(self,entity:Entity)->None:
         self.entities_list.append(entity)
         self[entity.position].entities.append(entity)
 
+    def map_dimensions(self) -> tuple[int, int, int, int]:
+        min_x = min(tile_position.x for tile_position in self.tiles_dictionary.keys()) * self.cells_in_tile
+        max_x = max(tile_position.x for tile_position in self.tiles_dictionary.keys()) * 2 * self.cells_in_tile
+        min_y = min(tile_position.y for tile_position in self.tiles_dictionary.keys()) * self.cells_in_tile
+        max_y = max(tile_position.y for tile_position in self.tiles_dictionary.keys()) * 2 * self.cells_in_tile
+        return min_x, max_x, min_y, max_y
     def perform_turn(self)->None:
         self._move()
         self._attack()
@@ -56,6 +65,9 @@ class Map:
     def _move_entity(self,entity:Entity)->None:
         if not entity.list_of_moves:
             return
+        if isinstance(entity, Enemy):
+            entity.random_direction()
+            entity.random_direction()
         #next_cell_vector_candodate = entity.position + entity.current_direction.rotate_vector(entity.list_of_moves[entity.move_index].to_vector2d())
         if entity.current_direction == Directions.NORTH or entity.current_direction == Directions.SOUTH:
             next_cell_vector_candodate = entity.position + entity.current_direction.opposite.to_vector2d()
@@ -104,9 +116,12 @@ class Map:
             if not (abs(entity.current_direction.to_int() - next_wall.facing.to_int())==1\
                         or abs(entity.current_direction.to_int() - next_wall.facing.to_int())==7):
                 entity.current_direction = entity._handle_bouncle(entity.current_direction, next_wall.facing)
-        self[entity.position].entities.pop( self[entity.position].entities.index(entity))
-        entity.position=next_cell_vector
-        self[entity.position].entities.append(entity)
+
+        min_x, max_x, min_y, max_y = self.map_dimensions()
+        if min_x <= next_cell_vector.x <= max_x and min_y <= next_cell_vector.y <= max_y:
+            self[entity.position].entities.pop( self[entity.position].entities.index(entity))
+            entity.position=next_cell_vector
+            self[entity.position].entities.append(entity)
 
     def generate_demo(self)->None:
         size = 2
@@ -116,7 +131,9 @@ class Map:
                 tile = Tile(Vector2d(x, y), {})
                 for i in range(10):
                     for j in range(10):
-                        if random.choices([True, False], [0.3, 0.7])[0] and not (i == 0 and j == 0):
+                        if (x == size and i == 9) or (x == -size and i == 0) or (y == size and j == 9) or (y == -size and j == 0):
+                            tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType.FULL, Directions(0)), [])
+                        elif random.choices([True, False], [0.2, 0.8])[0] and not (i == 0 and j == 0):
                             tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(1), Directions(0)), [])
                         elif i == 0 and j == 0:
                             tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(0), Directions(0)), [])
