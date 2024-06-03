@@ -52,10 +52,10 @@ class Hero(Entity):
             self.armor = armor
             armor.equipped = True
 
-    # def take_damage(self,damage):
-    #     self.current_health -= damage
-    #     if self.current_health <= 0:
-    #         self.alive = False
+    def take_damage(self,damage):
+        self.current_health -= (damage-self.armor.defense )
+        if self.current_health <= 0:
+            self.alive = False
 
     def heal_damage(self, amount_of_healing)->None:
         self.current_health += amount_of_healing

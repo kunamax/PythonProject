@@ -1,9 +1,10 @@
-from Application.Map.Entities.Items.Utility import Vector2d, Directions
+import random
+from .Entities.Items import Armor,Weapon,HealingPotion
+from .Entities.Items.Utility import Vector2d, Directions
 from ._cell import Cell
 from ._wall import Wall,WallType
 class Tile:
     def __init__(self,lower_left_vector2d:Vector2d,cells_dict:dict[Vector2d,Cell]={}):
-        # assert TODO: jakis error wpisywania danych
         self.cells_dict=cells_dict #should have 100 vectors
         self.lower_left_vector2d=lower_left_vector2d
     def __getitem__(self, item:Vector2d)->Cell:
@@ -23,7 +24,7 @@ class Tile:
         self.cells_dict[Vector2d(5, 4)] = Cell(Wall(WallType(2), Directions(3)), [])
         self.cells_dict[Vector2d(4, 5)] = Cell(Wall(WallType(2), Directions(7)), [])
         self.cells_dict[Vector2d(5, 5)] = Cell(Wall(WallType(2), Directions(1)), [])
-    def generate_demo_turn(self):
+    def generate_demo_turn(self,location:str):
         size = 10
         self.generate_demo_blank()
         for x in range(size):
@@ -45,6 +46,83 @@ class Tile:
         self.cells_dict[Vector2d(4,5)] = Cell(Wall(WallType(2), Directions(5)), [])
         self.cells_dict[Vector2d(5,4)] = Cell(Wall(WallType(2), Directions(5)), [])
         self.cells_dict[Vector2d(6,3)] = Cell(Wall(WallType(2), Directions(5)), [])
+        if location == "upper right":
+            ...
+        elif location == "upper left":
+            new_dict={}
+            for key in self.cells_dict.keys():
+                new_dict[key]=self.cells_dict[Vector2d(9-key.y,key.x)]
+                if new_dict[key].wall.type==WallType.HALF:
+                    new_dict[key].wall.facing= (int(new_dict[key].wall.facing)-2)%8
+            self.cells_dict=new_dict
+        elif location == "lower right":
+            new_dict = {}
+            for key in self.cells_dict.keys():
+                new_dict[key] = self.cells_dict[Vector2d(key.y,9-key.x)]
+                if new_dict[key].wall.type == WallType.HALF:
+                    new_dict[key].wall.facing = (int(new_dict[key].wall.facing) + 2) % 8
+            self.cells_dict = new_dict
+        elif location == "lower left":
+            new_dict = {}
+            for key in self.cells_dict.keys():
+                new_dict[key] = self.cells_dict[Vector2d(9-key.x, 9-key.y)]
+                if new_dict[key].wall.type == WallType.HALF:
+                    new_dict[key].wall.facing= (int(new_dict[key].wall.facing)-4)%8
+            self.cells_dict = new_dict
+
+    def generate_demo_straight(self,location:str, shop_tile=False):
+        if location == "up":
+            for x in range(10):
+                for y in [7, 8, 9]:
+                    self.cells_dict[Vector2d(x, y)] = Cell(Wall(WallType(1), Directions(0)), [])
+            for x,y in [(0,0),(0,1),(1,0),(0,2),(2,0),(1,1),(7,0),(8,0),(9,0),(8,1),(9,1),(9,2)]:
+                self.cells_dict[Vector2d(x, y)] = Cell(Wall(WallType(1), Directions(0)), [])
+            self.cells_dict[Vector2d(1, 2)] = Cell(Wall(WallType(2), Directions(1)), [])
+            self.cells_dict[Vector2d(2, 1)] = Cell(Wall(WallType(2), Directions(1)), [])
+            self.cells_dict[Vector2d(7, 1)] = Cell(Wall(WallType(2), Directions(7)), [])
+            self.cells_dict[Vector2d(8, 2)] = Cell(Wall(WallType(2), Directions(7)), [])
+        elif location=="down":
+            for x in range(10):
+                for y in [0, 1, 2]:
+                    self.cells_dict[Vector2d(x, y)] = Cell(Wall(WallType(1), Directions(0)), [])
+            for x,y in [(0,9),(0,8),(1,9),(0,7),(2,9),(1,8),(7,9),(8,9),(9,9),(8,8),(9,8),(9,7)]:
+                self.cells_dict[Vector2d(x, y)] = Cell(Wall(WallType(1), Directions(0)), [])
+            self.cells_dict[Vector2d(1, 7)] = Cell(Wall(WallType(2), Directions(3)), [])
+            self.cells_dict[Vector2d(2, 8)] = Cell(Wall(WallType(2), Directions(3)), [])
+            self.cells_dict[Vector2d(7, 8)] = Cell(Wall(WallType(2), Directions(5)), [])
+            self.cells_dict[Vector2d(8, 7)] = Cell(Wall(WallType(2), Directions(5)), [])
+        elif location=="left":
+            for x in [0,1,2]:
+                for y in range(10):
+                    self.cells_dict[Vector2d(x, y)] = Cell(Wall(WallType(1), Directions(0)), [])
+            for x,y in [(7,0),(7,9),(8,0),(8,1),(8,9),(8,8),(9,0),(9,1),(9,2),(9,9),(9,8),(9,7)]:
+                self.cells_dict[Vector2d(x, y)] = Cell(Wall(WallType(1), Directions(0)), [])
+            self.cells_dict[Vector2d(7, 8)] = Cell(Wall(WallType(2), Directions(5)), [])
+            self.cells_dict[Vector2d(8, 7)] = Cell(Wall(WallType(2), Directions(5)), [])
+            self.cells_dict[Vector2d(7, 1)] = Cell(Wall(WallType(2), Directions(7)), [])
+            self.cells_dict[Vector2d(8, 2)] = Cell(Wall(WallType(2), Directions(7)), [])
+        elif location=="right":
+            for x in [7,8,9]:
+                for y in range(10):
+                    self.cells_dict[Vector2d(x, y)] = Cell(Wall(WallType(1), Directions(0)), [])
+            for x,y in [(2,0),(2,9),(1,0),(1,1),(1,9),(1,8),(0,0),(0,1),(0,2),(0,9),(0,8),(0,7)]:
+                self.cells_dict[Vector2d(x, y)] = Cell(Wall(WallType(1), Directions(0)), [])
+            self.cells_dict[Vector2d(1, 2)] = Cell(Wall(WallType(2), Directions(3)), [])
+            self.cells_dict[Vector2d(2, 1)] = Cell(Wall(WallType(2), Directions(3)), [])
+            self.cells_dict[Vector2d(1, 7)] = Cell(Wall(WallType(2), Directions(1)), [])
+            self.cells_dict[Vector2d(2, 8)] = Cell(Wall(WallType(2), Directions(1)), [])
+        if shop_tile:
+            shop_item_cell=self.cells_dict[Vector2d(4+random.randint(0,1),4+random.randint(0,1))]
+            if location == "up":
+                shop_item_cell.shop_item=Armor("Rusty armor","Usefull garbage",10,1)
+            if location == "down":
+                attacks=[Vector2d(x,y) for x,y in [(0,1),(0,2),(0,3),(1,0),(-1,0)]]
+                shop_item_cell.shop_item = Weapon("Longsword", "Designed for two-handed use",5,2,attacks)
+            if location == "right":
+                shop_item_cell.shop_item=HealingPotion("Small healing potion","For noobies",1,2)
+            if location == "left":
+                attacks = [Vector2d(x, y) for x, y in [(-2, 0), (-2, 1), (-1, 1), (0, 1), (1, 1),(2,1),(2,0)]]
+                shop_item_cell.shop_item = Weapon("Battleshield", "Strange invention of a novice blacksmith", 7, 2, attacks)
     def __hash__(self):
         return hash(self.lower_left_vector2d)
 

@@ -2,8 +2,8 @@ from ._tile import Tile
 from ._cell import Cell
 from ._wall import Wall, WallType
 import random
-from Application.Map.Entities import Entity, Hero, Skeleton, Enemy
-from Application.Map.Entities.Items.Utility import Vector2d, Directions
+from .Entities import Entity, Hero, Skeleton, Enemy
+from .Entities.Items.Utility import Vector2d, Directions
 
 class Map:
     def __init__(self, tiles_dictionary: dict[Vector2d, Tile]=None):
@@ -31,20 +31,19 @@ class Map:
         max_y = max(tile_position.y for tile_position in self.tiles_dictionary.keys()) * 2 * self.cells_in_tile
         return min_x, max_x, min_y, max_y
     def perform_turn(self)->None:
-        self._move()
-        self._attack()
+        self.__move()
+        self.__attack()
 
-    def _move(self)->None:
+    def __move(self)->None:
         for ent in self.entities_list:
-            self._move_entity(ent)
+            self.__move_entity(ent)
             #buy
             if self[ent.position].shop_item!=None and type(ent)==Hero and ent.money>=self[ent.position].shop_item.price:
                 ent.add_item(self[ent.position].shop_item.item)
                 ent.money-=self[ent.position].shop_item.price
                 self[ent.position].shop_item=None
 
-
-    def _attack(self)->None:
+    def __attack(self)->None:
         for ent in self.entities_list:
             if not ent.interaction:
                 break
@@ -61,8 +60,7 @@ class Map:
                         skeleton = Skeleton("Dedek", position, Directions.NORTH)
                         self.entities_list.append(skeleton)
                         self[position].entities.append(skeleton)
-
-    def _move_entity(self,entity:Entity)->None:
+    def __move_entity(self,entity:Entity)->None:
         if not entity.list_of_moves:
             return
         if isinstance(entity, Enemy):
@@ -122,7 +120,6 @@ class Map:
             self[entity.position].entities.pop( self[entity.position].entities.index(entity))
             entity.position=next_cell_vector
             self[entity.position].entities.append(entity)
-
     def generate_demo(self)->None:
         size = 2
 
@@ -140,20 +137,17 @@ class Map:
                         else:
                             tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(0), Directions(0)), [])
                 self.tiles_dictionary[Vector2d(x, y)] = tile
+    def generate_demo_shop(self) -> None:
+        self.tiles_dictionary[Vector2d(-1, -1)].generate_demo_turn(self,location="lower left")
+        self.tiles_dictionary[Vector2d(-1, 0)].generate_demo_straight("left",shop_tile=True)
+        self.tiles_dictionary[Vector2d(-1, 1)].generate_demo_turn(self,location="upper left")
+        self.tiles_dictionary[Vector2d(0, 1)].generate_demo_straight("up",shop_tile=True)
+        self.tiles_dictionary[Vector2d(0, 0)].generate_demo_cross()
+        self.tiles_dictionary[Vector2d(0, -1)].generate_demo_straight("down",shop_tile=True)
+        self.tiles_dictionary[Vector2d(1, -1)].generate_demo_turn(self,location="lower right")
+        self.tiles_dictionary[Vector2d(1, 0)].generate_demo_straight("right",shop_tile=True)
+        self.tiles_dictionary[Vector2d(1, 1)].generate_demo_turn(self,location="lower left")
 
-
-        # self.tiles_dictionary[Vector2d(0, 0)].generate_demo_cross()
-        #
-        # self.tiles_dictionary[Vector2d(10, 0)].generate_demo_turn()
-        # self.tiles_dictionary[Vector2d(0, 10)].generate_demo_turn()
-        # self.tiles_dictionary[Vector2d(10, 10)].generate_demo_blank()
-        #
-        # self.tiles_dictionary[Vector2d(-10, 0)].generate_demo_cross()
-        # self.tiles_dictionary[Vector2d(0, -10)].generate_demo_cross()
-        # self.tiles_dictionary[Vector2d(-10, -10)].generate_demo_blank()
-        #
-        # self.tiles_dictionary[Vector2d(-10, 10)].generate_demo_cross()
-        # self.tiles_dictionary[Vector2d(10, -10)].generate_demo_cross()
 
 
 if __name__ == "__main__":
