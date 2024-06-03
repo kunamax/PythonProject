@@ -138,15 +138,15 @@ class Map:
                             tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(0), Directions(0)), [])
                 self.tiles_dictionary[Vector2d(x, y)] = tile
     def generate_demo_shop(self) -> None:
-        self.tiles_dictionary[Vector2d(-1, -1)].generate_demo_turn(self,location="lower left")
-        self.tiles_dictionary[Vector2d(-1, 0)].generate_demo_straight("left",shop_tile=True)
-        self.tiles_dictionary[Vector2d(-1, 1)].generate_demo_turn(self,location="upper left")
-        self.tiles_dictionary[Vector2d(0, 1)].generate_demo_straight("up",shop_tile=True)
+        self.tiles_dictionary[Vector2d(-10, -10)].generate_demo_turn(self,location="upper left")
+        self.tiles_dictionary[Vector2d(-10, 0)].generate_demo_straight("left",shop_tile=True)
+        self.tiles_dictionary[Vector2d(-10, 10)].generate_demo_turn(self,location="lower left")
+        self.tiles_dictionary[Vector2d(0, 10)].generate_demo_straight("down",shop_tile=True)
         self.tiles_dictionary[Vector2d(0, 0)].generate_demo_cross()
-        self.tiles_dictionary[Vector2d(0, -1)].generate_demo_straight("down",shop_tile=True)
-        self.tiles_dictionary[Vector2d(1, -1)].generate_demo_turn(self,location="lower right")
-        self.tiles_dictionary[Vector2d(1, 0)].generate_demo_straight("right",shop_tile=True)
-        self.tiles_dictionary[Vector2d(1, 1)].generate_demo_turn(self,location="lower left")
+        self.tiles_dictionary[Vector2d(0, -10)].generate_demo_straight("up",shop_tile=True)
+        self.tiles_dictionary[Vector2d(10, -10)].generate_demo_turn(self,location="upper right")
+        self.tiles_dictionary[Vector2d(10, 0)].generate_demo_straight("right",shop_tile=True)
+        self.tiles_dictionary[Vector2d(10, 10)].generate_demo_turn(self,location="lower right")
 
 
 
