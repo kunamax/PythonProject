@@ -1,13 +1,11 @@
 from Application.Map import Map
-from Entities import Hero
-from Items import Weapon
-from Items import Armor
-from Utility import Vector2d
-from Utility import Directions
+from Application.Map.Entities import Hero
+from Application.Map.Entities.Items import Weapon,Armor
+from Application.Map.Entities.Items.Utility import Vector2d,Directions
 
 if __name__=="__main__":
     map=Map()
-    map.generate_demo()
+    map.generate_demo_shop()
 
     weapon = Weapon("Sword", "A sharp blade", 10, 5,[Vector2d(0,1),Vector2d(1,1),Vector2d(-1,1),Vector2d(0,2)])
     armor = Armor("Shield", "A sturdy shield", 15, 3)
@@ -24,4 +22,4 @@ if __name__=="__main__":
     for i in range(27):
         print(hero.position)
         print(hero.current_direction)
-        hero.move(map)
+        map.generate_demo_shop()

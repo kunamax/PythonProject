@@ -4,7 +4,7 @@ from .Entities.Items.Utility import Vector2d, Directions
 from ._cell import Cell
 from ._wall import Wall,WallType
 class Tile:
-    def __init__(self,lower_left_vector2d:Vector2d,cells_dict:dict[Vector2d,Cell]={}):
+    def __init__(self,lower_left_vector2d:Vector2d,cells_dict:dict[Vector2d,Cell]):
         self.cells_dict=cells_dict #should have 100 vectors
         self.lower_left_vector2d=lower_left_vector2d
         self.upper_id=None
@@ -58,24 +58,25 @@ class Tile:
             for key in self.cells_dict.keys():
                 new_dict[key]=self.cells_dict[Vector2d(9-key.y,key.x)]
                 if new_dict[key].wall.type==WallType.HALF:
-                    new_dict[key].wall.facing= (int(new_dict[key].wall.facing)-2)%8
+                    new_dict[key].wall.facing= ((new_dict[key].wall.facing.to_int())-2)%8
             self.cells_dict=new_dict
         elif location == "lower right":
             new_dict = {}
             for key in self.cells_dict.keys():
                 new_dict[key] = self.cells_dict[Vector2d(key.y,9-key.x)]
                 if new_dict[key].wall.type == WallType.HALF:
-                    new_dict[key].wall.facing = (int(new_dict[key].wall.facing) + 2) % 8
+                    new_dict[key].wall.facing = ((new_dict[key].wall.facing.to_int())+2)%8
             self.cells_dict = new_dict
         elif location == "lower left":
             new_dict = {}
             for key in self.cells_dict.keys():
                 new_dict[key] = self.cells_dict[Vector2d(9-key.x, 9-key.y)]
                 if new_dict[key].wall.type == WallType.HALF:
-                    new_dict[key].wall.facing= (int(new_dict[key].wall.facing)-4)%8
+                    new_dict[key].wall.facing= ((new_dict[key].wall.facing.to_int())-4)%8
             self.cells_dict = new_dict
 
     def generate_demo_straight(self,location:str, shop_tile=False):
+        self.generate_demo_blank()
         if location == "up":
             for x in range(10):
                 for y in [7, 8, 9]:
@@ -116,6 +117,7 @@ class Tile:
             self.cells_dict[Vector2d(2, 1)] = Cell(Wall(WallType(2), Directions(3)), [])
             self.cells_dict[Vector2d(1, 7)] = Cell(Wall(WallType(2), Directions(1)), [])
             self.cells_dict[Vector2d(2, 8)] = Cell(Wall(WallType(2), Directions(1)), [])
+
         if shop_tile:
             shop_item_cell=self.cells_dict[Vector2d(4+random.randint(0,1),4+random.randint(0,1))]
             if location == "up":
