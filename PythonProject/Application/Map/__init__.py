@@ -2,4 +2,4 @@ from ._map import Map
 from ._tile import Tile
 from ._cell import Cell
 from ._wall import Wall,WallType
-print("inicjalisuje modol "+__name__)
+from .map_maker import MapMaker

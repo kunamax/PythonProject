@@ -1,5 +1,5 @@
 import random
-from .Entities.Items import Armor,Weapon,HealingPotion
+from .Entities.Items import Armor,Weapon,HealingPotion,ShopItem
 from .Entities.Items.Utility import Vector2d, Directions
 from ._cell import Cell
 from ._wall import Wall,WallType
@@ -7,8 +7,13 @@ class Tile:
     def __init__(self,lower_left_vector2d:Vector2d,cells_dict:dict[Vector2d,Cell]={}):
         self.cells_dict=cells_dict #should have 100 vectors
         self.lower_left_vector2d=lower_left_vector2d
+        self.upper_id=None
+        self.right_id=None
+        self.lower_id=None
+        self.left_id=None
     def __getitem__(self, item:Vector2d)->Cell:
         return self.cells_dict[item]
+
     def generate_demo_blank(self):
         size=10
         for x in range(size):
@@ -114,15 +119,15 @@ class Tile:
         if shop_tile:
             shop_item_cell=self.cells_dict[Vector2d(4+random.randint(0,1),4+random.randint(0,1))]
             if location == "up":
-                shop_item_cell.shop_item=Armor("Rusty armor","Usefull garbage",10,1)
+                shop_item_cell.shop_item=ShopItem(Armor("Rusty armor","Usefull garbage",10,1),7)
             if location == "down":
                 attacks=[Vector2d(x,y) for x,y in [(0,1),(0,2),(0,3),(1,0),(-1,0)]]
-                shop_item_cell.shop_item = Weapon("Longsword", "Designed for two-handed use",5,2,attacks)
+                shop_item_cell.shop_item = ShopItem(Weapon("Longsword", "Designed for two-handed use",5,2,attacks),15)
             if location == "right":
-                shop_item_cell.shop_item=HealingPotion("Small healing potion","For noobies",1,2)
+                shop_item_cell.shop_item=ShopItem(HealingPotion("Small healing potion","For noobies",1,2),2)
             if location == "left":
                 attacks = [Vector2d(x, y) for x, y in [(-2, 0), (-2, 1), (-1, 1), (0, 1), (1, 1),(2,1),(2,0)]]
-                shop_item_cell.shop_item = Weapon("Battleshield", "Strange invention of a novice blacksmith", 7, 2, attacks)
+                shop_item_cell.shop_item=ShopItem(Weapon("Battleshield", "Strange invention of a novice blacksmith", 7, 2, attacks),10)
     def __hash__(self):
         return hash(self.lower_left_vector2d)
 

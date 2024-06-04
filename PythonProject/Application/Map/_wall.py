@@ -1,5 +1,5 @@
 from enum import Enum
-from Application.Map.Entities.Items.Utility import Directions
+from Entities.Items.Utility import Directions
 class WallType(Enum):
     EMPTY=0
     FULL=1
