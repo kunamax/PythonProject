@@ -7,3 +7,9 @@ class GameEngine:
         self.map = Map()
         self.hero_position = Vector2d(0, 0)
         self.map.generate_demo()
+        # self.map.generate_demo_shop()
+
+    def go_to_shop(self):
+        self.map = Map()
+        self.hero_position = Vector2d(0, 0)
+        self.map.generate_demo_shop()
