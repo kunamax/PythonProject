@@ -61,9 +61,9 @@ class Directions(Enum):
         return result[self]
     def rotate_vector(self, vector:Vector2d)->Vector2d:
         result = {
-            Directions.NORTH: vector,
+            Directions.NORTH: Vector2d(vector.x, -vector.y),
             Directions.EAST: Vector2d(vector.y, -vector.x),
-            Directions.SOUTH: Vector2d(-vector.x, -vector.y),
+            Directions.SOUTH: vector,
             Directions.WEST: Vector2d(-vector.y, vector.x)
         }
         return result[self]

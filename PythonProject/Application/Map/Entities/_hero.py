@@ -52,6 +52,16 @@ class Hero(Entity):
             self.armor = armor
             armor.equipped = True
 
+    def unequip_weapon(self)->None:
+        if self.weapon:
+            self.weapon.equipped = False
+            self.weapon = None
+
+    def unequip_armor(self)->None:
+        if self.armor:
+            self.armor.equipped = False
+            self.armor = None
+
     def take_damage(self,damage):
         self.current_health -= (damage-self.armor.defense )
         if self.current_health <= 0:

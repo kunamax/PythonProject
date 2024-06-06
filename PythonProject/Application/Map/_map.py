@@ -2,7 +2,7 @@ from ._tile import Tile
 from ._cell import Cell
 from ._wall import Wall, WallType
 import random
-from .Entities import Entity, Hero, Skeleton, Enemy
+from .Entities import Entity, Hero, Skeleton, Enemy, Trap
 from .Entities.Items.Utility import Vector2d, Directions
 
 class Map:
@@ -49,7 +49,9 @@ class Map:
                 break
             for position in ent.attack():
                 for damaged_ent in self[position].entities:
-                    if not damaged_ent.interaction:
+                    if (not damaged_ent.interaction or (isinstance(damaged_ent,Enemy) and isinstance(ent,Enemy)) or
+                            (isinstance(damaged_ent, Enemy) and isinstance(ent,Trap)) or
+                            (isinstance(damaged_ent, Trap) and isinstance(ent,Enemy))):
                         break
                     damaged_ent.take_damage(ent.weapon.damage)
                     if not damaged_ent.alive:
@@ -130,7 +132,7 @@ class Map:
                     for j in range(10):
                         if (x == size and i == 9) or (x == -size and i == 0) or (y == size and j == 9) or (y == -size and j == 0):
                             tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType.FULL, Directions(0)), [])
-                        elif random.choices([True, False], [0.2, 0.8])[0] and not (i == 0 and j == 0):
+                        elif random.choices([True, False], [0.1, 0.9])[0] and not (i == 0 and j == 0):
                             tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(1), Directions(0)), [])
                         elif i == 0 and j == 0:
                             tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(0), Directions(0)), [])

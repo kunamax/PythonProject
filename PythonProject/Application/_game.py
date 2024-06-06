@@ -6,8 +6,7 @@ from Application.Map.Entities.Items import *
 from Map.Entities.Items import HealingPotion
 from Map.Entities.Items import Armor
 from Map.Entities.Items import Weapon
-from _button import Button
-from _gameEngine import GameEngine
+from Application import *
 from Application.Map import WallType
 from Application.Map.Entities.Items.Utility import Vector2d, Directions
 from Items import Deck
@@ -21,12 +20,16 @@ class Game:
         pygame.init()
         self.window_rex_x = 1200
         self.window_rex_y = 800
+        icon = pygame.image.load("Resources/hero.png")
+        pygame.display.set_icon(icon)
         self.map_dimension_x = 800
         self.map_dimension_y = 800
         self.tile_size = 33
         self.screen = pygame.display.set_mode((self.window_rex_x, self.window_rex_y))
         self.clock = pygame.time.Clock()
         self.scale = 100
+        self.main_menu = MainMenu(self.screen)
+        self.in_main_menu = True
         self.running = True
         self.paused = False
         self.hero = None
@@ -37,6 +40,8 @@ class Game:
         self.selected_card_index = None
         self.selected_potion_index = None
         self.selected_equipment_index = None
+        self.index_of_equipped_weapon = None
+        self.index_of_equipped_armor = None
         self.placing_card = False
         self.images = {}
         self.move_counter = 0
@@ -58,6 +63,7 @@ class Game:
         self.armour_texture = pygame.image.load("Resources/armour.png")
         self.pause_texture = pygame.image.load("Resources/pause_image.png")
         self.waves_texture = pygame.image.load("Resources/waves.png")
+        self.attack_texture = pygame.image.load("Resources/attack.png")
         self.wall_texture = pygame.transform.scale(self.wall_texture, (self.scale, self.scale))
         self.floor_texture = pygame.transform.scale(self.floor_texture, (self.scale, self.scale))
         self.hero_texture = pygame.transform.scale(self.hero_texture, (self.scale, self.scale))
@@ -72,6 +78,7 @@ class Game:
         self.sword_texture = pygame.transform.scale(self.sword_texture, (self.scale, self.scale))
         self.armour_texture = pygame.transform.scale(self.armour_texture, (self.scale, self.scale))
         self.waves_texture = pygame.transform.scale(self.waves_texture, (self.scale, self.scale))
+        self.attack_texture = pygame.transform.scale(self.attack_texture, (self.scale, self.scale))
 
         self.images = {
             WallType.HALF: {
@@ -91,6 +98,8 @@ class Game:
         self.reset_button = Button(800, 200, 200, 100, "Reset Game")
         self.resume_button = Button(500, 350, 200, 100, "Resume Game")
         self.potion_button = Button(1000, 0, 200, 100, "Use Potion")
+        self.weapon_button = Button(1000, 100, 200, 100, "Equip Weapon")
+        self.armor_button = Button(1000, 200, 200, 100, "Equip Armor")
 
         self.game_engine = GameEngine()
         self.hero_position = Vector2d(0, 0)
@@ -99,7 +108,8 @@ class Game:
         self.game_engine = GameEngine()
         self.hero_position = Vector2d(0, 0)
         weapon = Weapon("Sword", "A sharp blade", 10, 5, [Vector2d(0, 1),
-                                                          Vector2d(1, 1), Vector2d(-1, 1), Vector2d(0, 2)])
+                                                          Vector2d(1, 1), Vector2d(-1, 1), Vector2d(0, 2),
+                                                          Vector2d(1, 2), Vector2d(-1, 2)])
         armor = Armor("Shield", "A sturdy shield", 15, 3)
         position = Vector2d(0, 0)
         list_of_moves = []
@@ -107,28 +117,16 @@ class Game:
         direction = Directions.SOUTH
         self.create_character("Hero", 1, weapon, armor, position, list_of_moves, max_health, direction)
         self.game_engine.map.add_entity(self.hero)
-        healing_potion = HealingPotion("Healing Potion", "A potion that heals you", 10, 5)
-        mana_potion = ManaPotion("Mana Potion", "A potion that restores mana", 10, 5)
-        self.hero.add_item(healing_potion)
-        self.hero.add_item(mana_potion)
-        self.hero.add_item(healing_potion)
-        self.hero.add_item(mana_potion)
+        healing_potion1 = HealingPotion("Healing Potion", "A potion that heals you", 10, 5)
+        healing_potion2 = HealingPotion("Healing Potion", "A potion that heals you", 10, 5)
+        mana_potion1 = ManaPotion("Mana Potion", "A potion that restores mana", 10, 5)
+        mana_potion2 = ManaPotion("Mana Potion", "A potion that restores mana", 10, 5)
+        self.hero.add_item(healing_potion1)
+        self.hero.add_item(mana_potion1)
+        self.hero.add_item(healing_potion2)
+        self.hero.add_item(mana_potion2)
         self.hero.inventory.append(weapon)
         self.hero.inventory.append(armor)
-
-        trap = Trap(1, Vector2d(2, 2), [], 10, Directions.NORTH, weapon)
-        self.game_engine.map.add_entity(trap)
-        self.traps.append(trap)
-
-        weapon = Weapon("Claws", "Sharp claws", 10, 5, [Vector2d(0, 1), Vector2d(1, 1),
-                                                        Vector2d(-1, 1), Vector2d(0, 2)])
-        # enemy_position = Vector2d(0, 2)
-        # enemy_list_of_moves = [Directions.NORTH]
-        # enemy_max_health = 20
-        # enemy_direction = Directions.SOUTH
-        # enemy = Enemy(1, enemy_position, enemy_list_of_moves, enemy_max_health, enemy_direction, weapon)
-        # self.game_engine.map.add_entity(enemy)
-        # self.enemies.append(enemy)
 
         self.place_enemies(15)
 
@@ -141,17 +139,27 @@ class Game:
         self.set_offset()
 
         while self.running:
-            self.set_offset()
-            self.handle_events()
-            self.draw()
-            self.update()
+            if self.in_main_menu:
+                self.main_menu.draw()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        self.running = False
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                        if self.main_menu.handle_events(event):
+                            self.in_main_menu = False
+                            pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(0, 0, self.window_rex_x, self.window_rex_y))
+            else:
+                self.set_offset()
+                self.handle_events()
+                self.draw()
+                self.update()
             self.clock.tick(60)
             sleep(0.01)
         pygame.quit()
 
     def handle_events(self):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT: # 8 góra 15 dół 11 prawo 12 lewo
+            if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
@@ -166,45 +174,21 @@ class Game:
                         self.selected_card_index = i
                         self.placing_card = True
                         return
-                potions_per_row = 2
-                potion_width, potion_height = 100, 50
-                start_x, start_y = 1000, 250
-                for i, item in enumerate(self.hero.inventory):
-                    if isinstance(item, HealingPotion) or isinstance(item, ManaPotion):
-                        row = i // potions_per_row
-                        col = i % potions_per_row
-                        x = start_x + col * potion_width
-                        y = start_y + row * potion_height
-                        potion_rect = pygame.Rect(x, y, potion_width, potion_height)
-                        if potion_rect.collidepoint(mouse_pos):
-                            print(f"Potion {i} clicked")
-                            self.selected_potion_index = i
-                            return
-                weapons = [item for item in self.hero.inventory if isinstance(item, Weapon)]
-                armors = [item for item in self.hero.inventory if isinstance(item, Armor)]
 
-                equipment_per_row = 2
-                equipment_width, equipment_height = 100, 50
-                start_x, start_y = 1000, 400
-                for i, item in enumerate(weapons):
-                    row = i // equipment_per_row
-                    col = i % equipment_per_row
-                    x = start_x + col * equipment_width
-                    y = start_y + row * equipment_height
-                    equipment_rect = pygame.Rect(x, y, equipment_width, equipment_height)
-                    if equipment_rect.collidepoint(mouse_pos):
-                        print(f"Weapon {i} clicked")
+                items = self.hero.inventory
+                items_per_row = 2
+                item_width, item_height = 100, 50
+                start_x, start_y = 1000, 300
+
+                for i, item in enumerate(items):
+                    row = i // items_per_row
+                    col = i % items_per_row
+                    x = start_x + col * item_width
+                    y = start_y + row * item_height
+                    item_rect = pygame.Rect(x, y, item_width, item_height)
+                    if item_rect.collidepoint(mouse_pos):
+                        print(f"Item {i} clicked")
                         self.selected_equipment_index = i
-                        return
-                for i, item in enumerate(armors):
-                    row = (i + len(weapons)) // equipment_per_row
-                    col = (i + len(weapons)) % equipment_per_row
-                    x = start_x + col * equipment_width
-                    y = start_y + row * equipment_height
-                    equipment_rect = pygame.Rect(x, y, equipment_width, equipment_height)
-                    if equipment_rect.collidepoint(mouse_pos):
-                        print(f"Armor {i + len(weapons)} clicked")
-                        self.selected_equipment_index = i + len(weapons)
                         return
                 if (self.selected_card_index is not None and self.placing_card and mouse_pos[0] < self.map_dimension_x
                         and mouse_pos[1] < self.map_dimension_y and mouse_pos[0] > 0 and mouse_pos[1] > 0):
@@ -228,50 +212,60 @@ class Game:
                     pygame.quit()
                     quit()
                 elif self.reset_button.is_clicked(event):
-                    self.game_engine = GameEngine()
-                    self.hero.position = Vector2d(0, 0)
-                    self.hero.current_direction = Directions.SOUTH
-                    for enemy in self.enemies:
-                        enemy.position = Vector2d(0, 2)
-                        self.game_engine.map.add_entity(enemy)
-                    for trap in self.traps:
-                        trap.position = Vector2d(2, 2)
-                        self.game_engine.map.add_entity(trap)
-                    self.game_engine.map.add_entity(self.hero)
-                    self.deck.generate_cards(5)
-                    self.set_offset()
+                    self.run()
                 elif self.resume_button.is_clicked(event):
                     self.paused = False
                 elif self.potion_button.is_clicked(event):
-                    if self.selected_potion_index is not None:
-                        selected_potion = self.hero.inventory[self.selected_potion_index]
-                        self.use_potion(selected_potion)
-                        self.selected_potion_index = None
+                    if self.selected_equipment_index is not None:
+                        selected_item = self.hero.inventory[self.selected_equipment_index]
+                        if isinstance(selected_item, HealingPotion) or isinstance(selected_item, ManaPotion):
+                            self.use_potion(selected_item)
+                            self.selected_equipment_index = None
+                            print("Potion used")
+                elif self.weapon_button.is_clicked(event):
+                    if self.selected_equipment_index is not None:
+                        selected_item = self.hero.inventory[self.selected_equipment_index]
+                        if isinstance(selected_item, Weapon):
+                            self.equip_weapon(selected_item)
+                            print("Weapon equipped")
+                            self.index_of_equipped_weapon = self.selected_equipment_index
+                            self.selected_equipment_index = None
+                elif self.armor_button.is_clicked(event):
+                    if self.selected_equipment_index is not None:
+                        selected_item = self.hero.inventory[self.selected_equipment_index]
+                        if isinstance(selected_item, Armor):
+                            self.equip_armor(selected_item)
+                            print("Armor equipped")
+                            self.index_of_equipped_armor = self.selected_equipment_index
+                            self.selected_equipment_index = None
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.move_counter = 0
                     self.hero.list_of_moves = [Directions.SOUTH] * 5
                     for enemy in self.enemies:
                         enemy.list_of_moves = [Directions.NORTH] * 5
-                elif event.key == pygame.K_UP:
-                    self.hero.current_direction = Directions.NORTH
-
-                elif event.key == pygame.K_DOWN:
-                    self.hero.current_direction = Directions.SOUTH
-                elif event.key == pygame.K_LEFT:
-                    self.hero.current_direction = Directions.WEST
-                elif event.key == pygame.K_RIGHT:
-                    self.hero.current_direction = Directions.EAST
+                if self.game_engine.map[self.hero.position].wall.type != WallType.HALF:
+                    if event.key == pygame.K_UP:
+                        self.hero.current_direction = Directions.NORTH
+                    elif event.key == pygame.K_DOWN:
+                        self.hero.current_direction = Directions.SOUTH
+                    elif event.key == pygame.K_LEFT:
+                        self.hero.current_direction = Directions.WEST
+                    elif event.key == pygame.K_RIGHT:
+                        self.hero.current_direction = Directions.EAST
 
     def set_offset(self):
         hero_global_x, hero_global_y = self.hero.position.x, self.hero.position.y
         screen_center_x = self.window_rex_x / self.scale
         screen_center_y = self.window_rex_y / self.scale
         self.offset_x = screen_center_x - hero_global_x
-        self.offset_y = screen_center_y - hero_global_y
+        self.offset_y = screen_center_y - hero_global_y + 3
 
     def update(self):
+
         if self.hero.list_of_moves:
+            self.draw_attack()
+            self.hero_attacking = True
             self.game_engine.map.perform_turn()
             self.move_counter += 1
             if self.move_counter == 5:
@@ -335,13 +329,15 @@ class Game:
         else:
             self.draw_map()
             self.draw_cards()
-            self.draw_potions()
-            self.draw_equipment()
+            self.draw_items()
             self.draw_character_info()
             self.pause_button.draw(self.screen)
             self.quit_button.draw(self.screen)
             self.reset_button.draw(self.screen)
             self.potion_button.draw(self.screen)
+            self.weapon_button.draw(self.screen)
+            self.armor_button.draw(self.screen)
+            self.clear_areas_outside_map()
         pygame.display.flip()
 
     def draw_map(self):
@@ -428,14 +424,22 @@ class Game:
         gold_text = font.render(f"Gold: {self.hero.money}", True, (255, 255, 255))
         position_text = font.render(f"Position: {self.hero.position}", True, (255, 255, 255))
 
+        weapon_text = font.render(f"Weapon: {self.hero.weapon.name if self.hero.weapon else 'None'}", True,
+                                  (255, 255, 255))
+        armor_text = font.render(f"Armor: {self.hero.armor.name if self.hero.armor else 'None'}", True, (255, 255, 255))
+
         text_x = self.window_rex_x - 200
-        hp_text_y = self.window_rex_y - 100
-        gold_text_y = self.window_rex_y - 70
-        position_text_y = self.window_rex_y - 40
+        hp_text_y = self.window_rex_y - 150
+        gold_text_y = self.window_rex_y - 120
+        position_text_y = self.window_rex_y - 90
+        weapon_text_y = self.window_rex_y - 60
+        armor_text_y = self.window_rex_y - 30
 
         self.screen.blit(hp_text, (text_x, hp_text_y))
         self.screen.blit(gold_text, (text_x, gold_text_y))
         self.screen.blit(position_text, (text_x, position_text_y))
+        self.screen.blit(weapon_text, (text_x, weapon_text_y))
+        self.screen.blit(armor_text, (text_x, armor_text_y))
 
     def place_enemies(self, num_enemies):
         min_x, max_x, min_y, max_y = self.game_engine.map.map_dimensions()
@@ -457,6 +461,22 @@ class Game:
                 self.game_engine.map.add_entity(enemy)
                 print(f"Enemy placed at {position}")
                 break
+        for _ in range(5):
+            while True:
+                x = randint(min_x, max_x)
+                y = randint(min_y, max_y)
+                position = Vector2d(x, y)
+
+                if self.game_engine.map[position].wall.type != WallType.EMPTY:
+                    continue
+
+                weapon = Weapon("Claws", "Sharp claws", 10, 5, [Vector2d(0, 1), Vector2d(1, 1), Vector2d(-1, 1), Vector2d(0, 2)])
+
+                trap = Trap(1, Vector2d(x, y), [], 10, Directions.NORTH, weapon)
+                self.game_engine.map.add_entity(trap)
+                self.traps.append(trap)
+                break
+
 
     def add_item(self, item):
         if self.hero:
@@ -480,7 +500,7 @@ class Game:
             self.hero.equip_armor(armor)
 
     def use_potion(self, potion):
-            self.hero.use_item(potion)
+        self.hero.use_item(potion)
 
     def draw_cards(self):
         cards_per_row = 2
@@ -501,52 +521,76 @@ class Game:
                     pygame.draw.rect(self.screen, (0, 255, 0), (x, y, card_width, card_height), 3)
                 self.screen.blit(scaled_image, (x, y))
 
-    def draw_potions(self):
-        potions_per_row = 2
-        potion_width, potion_height = 100, 50
-        start_x, start_y = 1000, 250
+    def draw_items(self):
+        items_per_row = 2
+        item_width, item_height = 100, 50
+        start_x, start_y = 1000, 300
 
-        for i, item in enumerate(self.hero.inventory):
-            row = i // potions_per_row
-            col = i % potions_per_row
-            x = start_x + col * potion_width
-            y = start_y + row * potion_height
+        items = self.hero.inventory
+
+        for i, item in enumerate(items):
+            row = i // items_per_row
+            col = i % items_per_row
+            x = start_x + col * item_width
+            y = start_y + row * item_height
             if isinstance(item, HealingPotion):
-                scaled_image = pygame.transform.scale(self.healing_potion_texture, (potion_width, potion_height))
-                self.screen.blit(scaled_image, (x, y))
-            if isinstance(item, ManaPotion):
-                scaled_image = pygame.transform.scale(self.mana_potion_texture, (potion_width, potion_height))
-                self.screen.blit(scaled_image, (x, y))
-            if i == self.selected_potion_index:
-                pygame.draw.rect(self.screen, (0, 255, 0), (x, y, potion_width, potion_height), 3)
-
-    def draw_equipment(self):
-        equipment_per_row = 2
-        equipment_width, equipment_height = 100, 50
-        start_x, start_y = 1000, 400
-
-        weapons = [item for item in self.hero.inventory if isinstance(item, Weapon)]
-        armors = [item for item in self.hero.inventory if isinstance(item, Armor)]
-
-        for i, item in enumerate(weapons):
-            row = i // equipment_per_row
-            col = i % equipment_per_row
-            x = start_x + col * equipment_width
-            y = start_y + row * equipment_height
-            scaled_image = pygame.transform.scale(self.sword_texture, (equipment_width, equipment_height))
+                scaled_image = pygame.transform.scale(self.healing_potion_texture, (item_width, item_height))
+            elif isinstance(item, ManaPotion):
+                scaled_image = pygame.transform.scale(self.mana_potion_texture, (item_width, item_height))
+            elif isinstance(item, Weapon):
+                scaled_image = pygame.transform.scale(self.sword_texture, (item_width, item_height))
+            elif isinstance(item, Armor):
+                scaled_image = pygame.transform.scale(self.armour_texture, (item_width, item_height))
             self.screen.blit(scaled_image, (x, y))
             if i == self.selected_equipment_index:
-                pygame.draw.rect(self.screen, (0, 255, 0), (x, y, equipment_width, equipment_height), 3)
+                pygame.draw.rect(self.screen, (0, 255, 0), (x, y, item_width, item_height), 3)
+            if i == self.index_of_equipped_weapon:
+                pygame.draw.rect(self.screen, (255, 00, 255), (x, y, item_width, item_height), 3)
+            if i == self.index_of_equipped_armor:
+                pygame.draw.rect(self.screen, (0, 0, 255), (x, y, item_width, item_height), 3)
 
-        for i, item in enumerate(armors):
-            row = (i + len(weapons)) // equipment_per_row
-            col = (i + len(weapons)) % equipment_per_row
-            x = start_x + col * equipment_width
-            y = start_y + row * equipment_height
-            scaled_image = pygame.transform.scale(self.armour_texture, (equipment_width, equipment_height))
-            self.screen.blit(scaled_image, (x, y))
-            if i + len(weapons) == self.selected_equipment_index:
-                pygame.draw.rect(self.screen, (0, 255, 0), (x, y, equipment_width, equipment_height), 3)
+    def draw_attack(self):
+        list_of_attacks = self.hero.attack()
+
+        scale = 3
+
+        for i in list_of_attacks:
+            if self.game_engine.map[i].wall.type != WallType.EMPTY:
+                continue
+            x2, y2 = (i.x + self.offset_x) / scale, (i.y + self.offset_y) / scale
+
+            self.screen.blit(pygame.transform.scale(self.attack_texture, (self.tile_size, self.tile_size)),
+                             (x2 * self.scale, y2 * self.scale))
+
+    def clear_areas_outside_map(self):
+        map_width, map_height = self.map_dimension_x, self.map_dimension_y
+        min_x, max_x, min_y, max_y = self.game_engine.map.map_dimensions()
+
+        scale = 3
+
+        map_left_pixel = (min_x + self.offset_x) * (self.scale // scale)
+        map_right_pixel = (max_x + self.offset_x) * (self.scale // scale)
+        map_top_pixel = (min_y + self.offset_y) * (self.scale // scale)
+        map_bottom_pixel = (max_y + self.offset_y) * (self.scale // scale)
+
+        if self.in_maze:
+            if map_left_pixel > 0:
+                self.screen.fill((0, 0, 0), (0, 0, map_left_pixel, map_height))
+            if map_right_pixel < self.window_rex_x + 400:
+                self.screen.fill((0, 0, 0), (map_right_pixel - 320, 0, map_width - map_right_pixel + 320, map_height))
+            if map_top_pixel > 0:
+                self.screen.fill((0, 0, 0), (0, 0, map_width, map_top_pixel))
+            if map_bottom_pixel < self.window_rex_y + 600:
+                self.screen.fill((0, 0, 0), (0, map_bottom_pixel - 330, map_width, map_height - map_bottom_pixel + 450))
+        else:
+            if map_left_pixel > 0:
+                self.screen.fill((0, 0, 0), (0, 0, map_left_pixel, map_height))
+            if map_right_pixel < self.window_rex_x:
+                self.screen.fill((0, 0, 0), (map_right_pixel, 0, map_width - map_right_pixel, map_height))
+            if map_top_pixel > 0:
+                self.screen.fill((0, 0, 0), (0, 0, map_width, map_top_pixel))
+            if map_bottom_pixel < self.window_rex_y:
+                self.screen.fill((0, 0, 0), (0, map_bottom_pixel, map_width, map_height - map_bottom_pixel))
 
 
 if __name__ == "__main__":
