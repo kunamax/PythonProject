@@ -109,7 +109,7 @@ class Map:
                     entity.on_wall = True
                     next_cell_vector = next_cell_vector_candodate
                 else:
-                    entity.current_direction = entity.current_direction.opposite()
+                    entity.current_direction = entity.current_direction.opposite
                     next_cell_vector = entity.position
 
         next_wall = self[next_cell_vector].wall

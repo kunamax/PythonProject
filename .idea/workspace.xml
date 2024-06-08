@@ -2,15 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1fe2bd94-136e-48f2-8920-9056b3320c22" name="Changes" comment="works but i'm not sure about cleanliness of code">
-      <change afterPath="$PROJECT_DIR$/PythonProject/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/Items/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/Items/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/Items/_card.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_card.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/Items/_deck.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_deck.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/__mainMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/__mainMenu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/_map.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_map.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/map_maker.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/map_maker.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject/Application/_game.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/_game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/test_inplememtaion.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/_gameEngine.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/_gameEngine.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,5 +99,16 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="works but i'm not sure about cleanliness of code" />
     <option name="LAST_COMMIT_MESSAGE" value="works but i'm not sure about cleanliness of code" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/PythonProject/Application/Map/_map.py</url>
+          <line>98</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

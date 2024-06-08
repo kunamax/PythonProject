@@ -111,11 +111,11 @@ class Game:
         self.game_over = False
 
         self.game_engine = GameEngine()
-        self.hero_position = Vector2d(0, 0)
+        self.hero_position = Vector2d(5, 5)
 
     def run(self):
         self.game_engine = GameEngine()
-        self.hero_position = Vector2d(0, 0)
+        self.hero_position = Vector2d(5, 5)
         self.deck.generate_cards(5)
         weapon = Weapon("Sword", "A sharp blade", 10, 5, [Vector2d(0, 1),
                                                           Vector2d(1, 1), Vector2d(-1, 1), Vector2d(0, 2),
@@ -320,7 +320,7 @@ class Game:
         self.in_maze = False
         pygame.display.flip()
         self.game_engine.go_to_shop()
-        self.hero.position = Vector2d(-5, 10)
+        self.hero.position = Vector2d(5, 5)
         self.game_engine.map.add_entity(self.hero)
         min_x, max_x, min_y, max_y = self.game_engine.map.map_dimensions()
         self.checkpoint = Vector2d(-4, 9)
@@ -528,6 +528,7 @@ class Game:
         self.hero = Hero(initiative, weapon, armor, position, list_of_moves, max_health, name, direction)
         self.hero.add_item(weapon)
         self.hero.add_item(armor)
+        self.hero.on_wall=True
 
     def create_item(self, item_class, *args):
         item = item_class(*args)
