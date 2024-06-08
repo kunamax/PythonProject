@@ -48,6 +48,7 @@ class Map:
             if not ent.interaction:
                 break
             for position in ent.attack():
+
                 for damaged_ent in self[position].entities:
                     if (not damaged_ent.interaction or (isinstance(damaged_ent,Enemy) and isinstance(ent,Enemy)) or
                             (isinstance(damaged_ent, Enemy) and isinstance(ent,Trap)) or

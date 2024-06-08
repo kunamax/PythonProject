@@ -9,7 +9,7 @@ from Map.Entities.Items import Weapon
 from Application import *
 from Application.Map import WallType
 from Application.Map.Entities.Items.Utility import Vector2d, Directions
-from Items import Deck
+from Application.Map.Entities.Items import Deck, Card
 
 from time import sleep
 from random import randint
@@ -25,6 +25,7 @@ class Game:
         self.map_dimension_x = 800
         self.map_dimension_y = 800
         self.tile_size = 33
+        self.font = pygame.font.Font(None, 36)
         self.screen = pygame.display.set_mode((self.window_rex_x, self.window_rex_y))
         self.clock = pygame.time.Clock()
         self.scale = 100
@@ -36,7 +37,6 @@ class Game:
         self.enemies = []
         self.traps = []
         self.deck = Deck()
-        self.deck.generate_cards(5)
         self.selected_card_index = None
         self.selected_potion_index = None
         self.selected_equipment_index = None
@@ -64,6 +64,8 @@ class Game:
         self.pause_texture = pygame.image.load("Resources/pause_image.png")
         self.waves_texture = pygame.image.load("Resources/waves.png")
         self.attack_texture = pygame.image.load("Resources/attack.png")
+        self.item_texture = pygame.image.load("Resources/crate.png")
+        self.spikes_texture = pygame.image.load("Resources/spikes.png")
         self.wall_texture = pygame.transform.scale(self.wall_texture, (self.scale, self.scale))
         self.floor_texture = pygame.transform.scale(self.floor_texture, (self.scale, self.scale))
         self.hero_texture = pygame.transform.scale(self.hero_texture, (self.scale, self.scale))
@@ -79,6 +81,8 @@ class Game:
         self.armour_texture = pygame.transform.scale(self.armour_texture, (self.scale, self.scale))
         self.waves_texture = pygame.transform.scale(self.waves_texture, (self.scale, self.scale))
         self.attack_texture = pygame.transform.scale(self.attack_texture, (self.scale, self.scale))
+        self.item_texture = pygame.transform.scale(self.item_texture, (self.scale, self.scale))
+        self.spikes_texture = pygame.transform.scale(self.spikes_texture, (self.scale, self.scale))
 
         self.images = {
             WallType.HALF: {
@@ -100,6 +104,8 @@ class Game:
         self.potion_button = Button(1000, 0, 200, 100, "Use Potion")
         self.weapon_button = Button(1000, 100, 200, 100, "Equip Weapon")
         self.armor_button = Button(1000, 200, 200, 100, "Equip Armor")
+        self.new_game_button = Button(500, 400, 200, 100, "New Game")
+        self.game_over = False
 
         self.game_engine = GameEngine()
         self.hero_position = Vector2d(0, 0)
@@ -107,13 +113,14 @@ class Game:
     def run(self):
         self.game_engine = GameEngine()
         self.hero_position = Vector2d(0, 0)
+        self.deck.generate_cards(5)
         weapon = Weapon("Sword", "A sharp blade", 10, 5, [Vector2d(0, 1),
                                                           Vector2d(1, 1), Vector2d(-1, 1), Vector2d(0, 2),
                                                           Vector2d(1, 2), Vector2d(-1, 2)])
         armor = Armor("Shield", "A sturdy shield", 15, 3)
         position = Vector2d(0, 0)
         list_of_moves = []
-        max_health = 100
+        max_health = 10
         direction = Directions.SOUTH
         self.create_character("Hero", 1, weapon, armor, position, list_of_moves, max_health, direction)
         self.game_engine.map.add_entity(self.hero)
@@ -127,6 +134,9 @@ class Game:
         self.hero.add_item(mana_potion2)
         self.hero.inventory.append(weapon)
         self.hero.inventory.append(armor)
+
+        self.inventory_size = len(self.hero.inventory)
+        self.hero_money = self.hero.money
 
         self.place_enemies(15)
 
@@ -200,6 +210,7 @@ class Game:
                         print(selected_card.wall.type, selected_card.wall.facing)
                         self.game_engine.map[map_pos].wall.type = selected_card.wall.type
                         self.game_engine.map[map_pos].wall.facing = selected_card.wall.facing
+                        self.deck.cards.pop(self.selected_card_index)
                         self.selected_card_index = None
                         self.placing_card = False
                 if self.pause_button.is_clicked(event):
@@ -220,6 +231,8 @@ class Game:
                         selected_item = self.hero.inventory[self.selected_equipment_index]
                         if isinstance(selected_item, HealingPotion) or isinstance(selected_item, ManaPotion):
                             self.use_potion(selected_item)
+                            if isinstance(selected_item, ManaPotion):
+                                self.deck.add_cards_any(1)
                             self.selected_equipment_index = None
                             print("Potion used")
                 elif self.weapon_button.is_clicked(event):
@@ -238,6 +251,13 @@ class Game:
                             print("Armor equipped")
                             self.index_of_equipped_armor = self.selected_equipment_index
                             self.selected_equipment_index = None
+                elif self.new_game_button.is_clicked(event):
+                    if self.game_over:
+                        self.game_over = False
+                        pygame.display.flip()
+                        self.screen.fill((0, 0, 0))
+                        self.run()
+
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.move_counter = 0
@@ -263,6 +283,10 @@ class Game:
 
     def update(self):
 
+        if self.hero.current_health <= 0:
+            self.game_over = True
+            return
+
         if self.hero.list_of_moves:
             self.draw_attack()
             self.hero_attacking = True
@@ -274,6 +298,13 @@ class Game:
             if enemy.list_of_moves:
                 enemy.list_of_moves.pop(0)
         self.set_offset()
+
+        if len(self.hero.inventory) > self.inventory_size and self.hero.money != self.hero_money:
+            self.display_message("You bought an item!")
+            self.inventory_size = len(self.hero.inventory)
+            self.hero_money = self.hero.money
+        elif len(self.hero.inventory) == self.inventory_size and self.hero.money == self.hero_money and self.game_engine.map[self.hero.position].shop_item:
+            self.display_message("Not enough money!")
 
         if self.hero.position == self.checkpoint:
             if self.in_maze:
@@ -326,6 +357,8 @@ class Game:
     def draw(self):
         if self.paused:
             self.draw_pause_screen()
+        elif self.game_over:
+            self.draw_game_over_screen()
         else:
             self.draw_map()
             self.draw_cards()
@@ -416,6 +449,13 @@ class Game:
                     self.screen.blit(
                         pygame.transform.scale(self.waves_texture, (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
+                if cell.shop_item:
+                    self.screen.blit(
+                        pygame.transform.scale(self.item_texture, (self.scale // scale, self.scale // scale)),
+                        (x * self.scale, y * self.scale))
+                    price = cell.shop_item.price
+                    price_text = self.font.render(str(price), True, (0, 0, 0))
+                    self.screen.blit(price_text, (x * self.scale, y * self.scale))
 
     def draw_character_info(self):
         font = pygame.font.Font(None, 36)
@@ -477,7 +517,6 @@ class Game:
                 self.traps.append(trap)
                 break
 
-
     def add_item(self, item):
         if self.hero:
             self.hero.add_item(item)
@@ -501,6 +540,26 @@ class Game:
 
     def use_potion(self, potion):
         self.hero.use_item(potion)
+
+    def display_message(self, message):
+        font = pygame.font.Font(None, 36)
+        text_surface = font.render(message, True, (255, 255, 255))
+        text_rect = text_surface.get_rect(center=(self.map_dimension_x / 2, self.map_dimension_y / 2))
+        self.screen.blit(text_surface, text_rect)
+        pygame.display.flip()
+        pygame.time.wait(2000)
+        pygame.draw.rect(self.screen, (0, 0, 0), text_rect)
+
+    def draw_game_over_screen(self):
+        overlay = pygame.Surface((self.window_rex_x, self.window_rex_y))
+        overlay.fill((0, 0, 0))
+        overlay.set_alpha(60)
+        self.screen.blit(overlay, (0, 0))
+        game_over_text = self.font.render("Game Over", True, (255, 255, 255))
+        text_rect = game_over_text.get_rect(center=(self.window_rex_x / 2, self.map_dimension_y / 4))
+        self.screen.blit(game_over_text, text_rect)
+        self.new_game_button.draw(self.screen)
+        pygame.display.flip()
 
     def draw_cards(self):
         cards_per_row = 2
@@ -550,17 +609,29 @@ class Game:
                 pygame.draw.rect(self.screen, (0, 0, 255), (x, y, item_width, item_height), 3)
 
     def draw_attack(self):
-        list_of_attacks = self.hero.attack()
-
         scale = 3
 
-        for i in list_of_attacks:
-            if self.game_engine.map[i].wall.type != WallType.EMPTY:
-                continue
-            x2, y2 = (i.x + self.offset_x) / scale, (i.y + self.offset_y) / scale
+        if not self.in_maze:
+            return
 
-            self.screen.blit(pygame.transform.scale(self.attack_texture, (self.tile_size, self.tile_size)),
-                             (x2 * self.scale, y2 * self.scale))
+        for entity in self.game_engine.map.entities_list:
+            if hasattr(entity, 'attack'):
+                list_of_attacks = entity.attack()
+
+                for i in list_of_attacks:
+                    if self.game_engine.map[i].wall.type != WallType.EMPTY:
+                        continue
+                    x2, y2 = (i.x + self.offset_x) / scale, (i.y + self.offset_y) / scale
+
+                    if x2 * self.scale < 0 or y2 * self.scale < 0 or x2 * self.scale > self.map_dimension_x - 30:
+                        continue
+
+                    if isinstance(entity, Hero):
+                        self.screen.blit(pygame.transform.scale(self.attack_texture, (self.tile_size, self.tile_size)),
+                                         (x2 * self.scale, y2 * self.scale))
+                    elif isinstance(entity, Trap) or isinstance(entity, Enemy):
+                        self.screen.blit(pygame.transform.scale(self.spikes_texture, (self.tile_size, self.tile_size)),
+                                         (x2 * self.scale, y2 * self.scale))
 
     def clear_areas_outside_map(self):
         map_width, map_height = self.map_dimension_x, self.map_dimension_y
