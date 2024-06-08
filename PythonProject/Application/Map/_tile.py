@@ -51,28 +51,28 @@ class Tile:
         self.cells_dict[Vector2d(4,5)] = Cell(Wall(WallType(2), Directions(5)), [])
         self.cells_dict[Vector2d(5,4)] = Cell(Wall(WallType(2), Directions(5)), [])
         self.cells_dict[Vector2d(6,3)] = Cell(Wall(WallType(2), Directions(5)), [])
-        if location == "upper right":
+        if location == "upper left":
             ...
-        elif location == "upper left":
+        elif location == "upper right":
             new_dict={}
             for key in self.cells_dict.keys():
                 new_dict[key]=self.cells_dict[Vector2d(9-key.y,key.x)]
                 if new_dict[key].wall.type==WallType.HALF:
-                    new_dict[key].wall.facing= ((new_dict[key].wall.facing.to_int())-2)%8
+                    new_dict[key].wall.facing= Directions(((new_dict[key].wall.facing.to_int())-2)%8)
             self.cells_dict=new_dict
-        elif location == "lower right":
+        elif location == "lower left":
             new_dict = {}
             for key in self.cells_dict.keys():
                 new_dict[key] = self.cells_dict[Vector2d(key.y,9-key.x)]
                 if new_dict[key].wall.type == WallType.HALF:
-                    new_dict[key].wall.facing = ((new_dict[key].wall.facing.to_int())+2)%8
+                    new_dict[key].wall.facing = Directions(((new_dict[key].wall.facing.to_int())+2)%8)
             self.cells_dict = new_dict
-        elif location == "lower left":
+        elif location == "lower right":
             new_dict = {}
             for key in self.cells_dict.keys():
                 new_dict[key] = self.cells_dict[Vector2d(9-key.x, 9-key.y)]
                 if new_dict[key].wall.type == WallType.HALF:
-                    new_dict[key].wall.facing= ((new_dict[key].wall.facing.to_int())-4)%8
+                    new_dict[key].wall.facing= Directions(((new_dict[key].wall.facing.to_int())-4)%8)
             self.cells_dict = new_dict
 
     def generate_demo_straight(self,location:str, shop_tile=False):

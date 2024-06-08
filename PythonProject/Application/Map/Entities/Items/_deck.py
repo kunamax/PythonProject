@@ -1,5 +1,5 @@
 from random import choice
-from Application.Map.Entities.Items.Utility import Directions
+from .Utility import Directions
 from ._card import Card
 
 
@@ -18,13 +18,13 @@ class Deck:
         #     card = Card(wall)
         #     self.cards.append(card)
 
-        from Application.Map import Wall, WallType
-
-        card = Card(Wall(WallType.HALF, Directions.NORTH_EAST))
-        self.cards.append(card)
-        card = Card(Wall(WallType.HALF, Directions.NORTH_WEST))
-        self.cards.append(card)
-        card = Card(Wall(WallType.HALF, Directions.SOUTH_EAST))
-        self.cards.append(card)
-        card = Card(Wall(WallType.HALF, Directions.SOUTH_WEST))
-        self.cards.append(card)
+        # from .PythonProject. import Wall, WallType
+        #
+        # card = Card(Wall(WallType.HALF, Directions.NORTH_EAST))
+        # self.cards.append(card)
+        # card = Card(Wall(WallType.HALF, Directions.NORTH_WEST))
+        # self.cards.append(card)
+        # card = Card(Wall(WallType.HALF, Directions.SOUTH_EAST))
+        # self.cards.append(card)
+        # card = Card(Wall(WallType.HALF, Directions.SOUTH_WEST))
+        # self.cards.append(card)
