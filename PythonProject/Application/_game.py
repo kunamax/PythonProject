@@ -1,23 +1,12 @@
 import pygame
 
-from Map.Entities import Skeleton as Skel
-from Map.Entities import *
-from Map.Entities.Items import *
-from Map.Entities.Items import HealingPotion
-from Map.Entities.Items import Armor
-from Map.Entities.Items import Weapon
-<<<<<<< HEAD
+from Application.Map.Entities import Skeleton as Skel
+from Application.Map.Entities import Hero, Enemy, Trap
+from Application.Map.Entities.Items import Armor, Weapon, HealingPotion, ManaPotion
 from Application import *
 from Application.Map import WallType
 from Application.Map.Entities.Items.Utility import Vector2d, Directions
-from Application.Map.Entities.Items import Deck, Card
-=======
-from _button import Button
-from _gameEngine import GameEngine
-from Map import WallType
-from Map.Entities.Items.Utility import Vector2d, Directions
-from Map.Entities.Items import Deck
->>>>>>> origin/shop-demo
+from Application.Map import Deck
 
 from time import sleep
 from random import randint
@@ -116,19 +105,19 @@ class Game:
         self.game_over = False
 
         self.game_engine = GameEngine()
-        self.hero_position = Vector2d(0, 0)
+        self.hero_position = Vector2d(2, 2)
 
     def run(self):
         self.game_engine = GameEngine()
-        self.hero_position = Vector2d(0, 0)
+        self.hero_position = Vector2d(2, 2)
         self.deck.generate_cards(5)
         weapon = Weapon("Sword", "A sharp blade", 10, 5, [Vector2d(0, 1),
                                                           Vector2d(1, 1), Vector2d(-1, 1), Vector2d(0, 2),
                                                           Vector2d(1, 2), Vector2d(-1, 2)])
         armor = Armor("Shield", "A sturdy shield", 15, 3)
-        position = Vector2d(0, 0)
+        position = Vector2d(self.game_engine.hero_position.x, self.game_engine.hero_position.y)
         list_of_moves = []
-        max_health = 10
+        max_health = 100
         direction = Directions.SOUTH
         self.create_character("Hero", 1, weapon, armor, position, list_of_moves, max_health, direction)
         self.game_engine.map.add_entity(self.hero)
@@ -231,6 +220,7 @@ class Game:
                     pygame.quit()
                     quit()
                 elif self.reset_button.is_clicked(event):
+                    self.screen.fill((0, 0, 0))
                     self.run()
                 elif self.resume_button.is_clicked(event):
                     self.paused = False
@@ -325,10 +315,10 @@ class Game:
         self.in_maze = False
         pygame.display.flip()
         self.game_engine.go_to_shop()
-        self.hero.position = Vector2d(-5, 10)
+        self.hero.position = Vector2d(5, -10)
         self.game_engine.map.add_entity(self.hero)
         min_x, max_x, min_y, max_y = self.game_engine.map.map_dimensions()
-        self.checkpoint = Vector2d(-4, 9)
+        self.checkpoint = Vector2d(5, 19)
 
     def go_to_maze(self):
         self.transition_screen()
@@ -655,12 +645,12 @@ class Game:
         if self.in_maze:
             if map_left_pixel > 0:
                 self.screen.fill((0, 0, 0), (0, 0, map_left_pixel, map_height))
-            if map_right_pixel < self.window_rex_x + 400:
-                self.screen.fill((0, 0, 0), (map_right_pixel - 320, 0, map_width - map_right_pixel + 320, map_height))
+            if map_right_pixel < self.window_rex_x:
+                self.screen.fill((0, 0, 0), (map_right_pixel, 0, self.map_dimension_x - map_right_pixel, map_height))
             if map_top_pixel > 0:
                 self.screen.fill((0, 0, 0), (0, 0, map_width, map_top_pixel))
-            if map_bottom_pixel < self.window_rex_y + 600:
-                self.screen.fill((0, 0, 0), (0, map_bottom_pixel - 330, map_width, map_height - map_bottom_pixel + 450))
+            if map_bottom_pixel < self.window_rex_y:
+                self.screen.fill((0, 0, 0), (0, map_bottom_pixel, map_width, self.window_rex_y - map_bottom_pixel))
         else:
             if map_left_pixel > 0:
                 self.screen.fill((0, 0, 0), (0, 0, map_left_pixel, map_height))

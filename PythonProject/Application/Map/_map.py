@@ -26,9 +26,9 @@ class Map:
 
     def map_dimensions(self) -> tuple[int, int, int, int]:
         min_x = min(tile_position.x for tile_position in self.tiles_dictionary.keys()) * self.cells_in_tile
-        max_x = max(tile_position.x for tile_position in self.tiles_dictionary.keys()) * 2 * self.cells_in_tile
+        max_x = (max(tile_position.x for tile_position in self.tiles_dictionary.keys()) * self.cells_in_tile) + self.cells_in_tile
         min_y = min(tile_position.y for tile_position in self.tiles_dictionary.keys()) * self.cells_in_tile
-        max_y = max(tile_position.y for tile_position in self.tiles_dictionary.keys()) * 2 * self.cells_in_tile
+        max_y = (max(tile_position.y for tile_position in self.tiles_dictionary.keys()) * self.cells_in_tile) + self.cells_in_tile
         return min_x, max_x, min_y, max_y
     def perform_turn(self)->None:
         self.__move()
@@ -103,6 +103,8 @@ class Map:
                 else: #obroc
                     entity.current_direction=entity._handle_bouncle(entity.current_direction,next_wall.facing)
                     next_cell_vector = next_cell_vector_candodate
+            if isinstance(entity, Hero):
+                print(next_wall.type, next_wall.facing, entity.current_direction, next_cell_vector_candodate, next_cell_vector)
 
             if next_wall.type == WallType.STAIRS:
                 if next_wall.facing == entity.current_direction:
@@ -118,7 +120,11 @@ class Map:
                         or abs(entity.current_direction.to_int() - next_wall.facing.to_int())==7):
                 entity.current_direction = entity._handle_bouncle(entity.current_direction, next_wall.facing)
 
+        if next_wall.type == WallType.FULL and entity.on_wall:
+            entity.current_direction = entity._handle_bouncle(entity.current_direction.opposite.to_int(), next_wall.facing)
+
         min_x, max_x, min_y, max_y = self.map_dimensions()
+        print(max_x, max_y, next_cell_vector.x, next_cell_vector.y)
         if min_x <= next_cell_vector.x <= max_x and min_y <= next_cell_vector.y <= max_y:
             self[entity.position].entities.pop( self[entity.position].entities.index(entity))
             entity.position=next_cell_vector
@@ -150,7 +156,6 @@ class Map:
         self.tiles_dictionary[Vector2d(1, -1)]=Tile(Vector2d(1,-1),{})
         self.tiles_dictionary[Vector2d(1, 0)]=Tile(Vector2d(1,0),{})
         self.tiles_dictionary[Vector2d(1, 1)]=Tile(Vector2d(1,1),{})
-<<<<<<< HEAD
 
         self.tiles_dictionary[Vector2d(-1, -1)].generate_demo_turn("lower right")
         self.tiles_dictionary[Vector2d(-1, 0)].generate_demo_straight("left", shop_tile=True)
@@ -160,19 +165,6 @@ class Map:
         self.tiles_dictionary[Vector2d(0, -1)].generate_demo_straight("up", shop_tile=True)
         self.tiles_dictionary[Vector2d(1, -1)].generate_demo_turn("lower left")
         self.tiles_dictionary[Vector2d(1, 0)].generate_demo_straight("right", shop_tile=True)
-=======
-        # print(self.tiles_dictionary.keys())
-        # for k in self.tiles_dictionary.keys():
-        #     print(k)
-        self.tiles_dictionary[Vector2d(-1, -1)].generate_demo_turn("lower right")
-        self.tiles_dictionary[Vector2d(-1, 0)].generate_demo_straight("left",shop_tile=True)
-        self.tiles_dictionary[Vector2d(-1, 1)].generate_demo_turn("upper right")
-        self.tiles_dictionary[Vector2d(0, 1)].generate_demo_straight("down",shop_tile=True)
-        self.tiles_dictionary[Vector2d(0, 0)].generate_demo_cross()
-        self.tiles_dictionary[Vector2d(0, -1)].generate_demo_straight("up",shop_tile=True)
-        self.tiles_dictionary[Vector2d(1, -1)].generate_demo_turn("lower left")
-        self.tiles_dictionary[Vector2d(1, 0)].generate_demo_straight("right",shop_tile=True)
->>>>>>> origin/shop-demo
         self.tiles_dictionary[Vector2d(1, 1)].generate_demo_turn("upper left")
 
 
