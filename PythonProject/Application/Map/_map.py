@@ -56,7 +56,7 @@ class Map:
                         break
                     damaged_ent.take_damage(ent.weapon.damage)
                     if not damaged_ent.alive:
-                        print("Died")
+                        print("Died", damaged_ent.name)
                         ent.money+=damaged_ent.money
                         self.entities_list.pop(self.entities_list.index(damaged_ent))
                         self[position].entities.pop(self[position].entities.index(damaged_ent))
@@ -119,9 +119,6 @@ class Map:
             if not (abs(entity.current_direction.to_int() - next_wall.facing.to_int())==1\
                         or abs(entity.current_direction.to_int() - next_wall.facing.to_int())==7):
                 entity.current_direction = entity._handle_bouncle(entity.current_direction, next_wall.facing)
-
-        if next_wall.type == WallType.FULL and entity.on_wall:
-            entity.current_direction = entity._handle_bouncle(entity.current_direction.opposite.to_int() + self[entity.position].wall.facing.to_int() + 1, next_wall.facing)
 
         min_x, max_x, min_y, max_y = self.map_dimensions()
         if min_x <= next_cell_vector.x <= max_x and min_y <= next_cell_vector.y <= max_y:

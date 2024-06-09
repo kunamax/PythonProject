@@ -7,3 +7,6 @@ class Skeleton():
         self.list_of_attacks = []
         self.money = 0
         self.interaction = False
+
+    def attack(self):
+        return []

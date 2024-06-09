@@ -47,6 +47,14 @@ class Directions(Enum):
             Directions.WEST: Vector2d(-1,0)
         }
         return result[self]
+    def angle(self)->int:
+        result = {
+            Directions.NORTH: 90,
+            Directions.SOUTH: 270,
+            Directions.WEST: 180,
+            Directions.EAST: 0
+        }
+        return result[self]
     def to_int(self)->int:
         result = {
         Directions.NORTH : 0,

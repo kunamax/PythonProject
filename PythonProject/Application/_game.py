@@ -1,3 +1,5 @@
+import random
+
 import pygame
 
 from Application.Map.Entities import Skeleton as Skel
@@ -45,59 +47,47 @@ class Game:
         self.offset_x = 4
         self.offset_y = 4
 
-        self.wall_texture = pygame.image.load("Resources/wall.jpg")
-        self.floor_texture = pygame.image.load("Resources/floor.jpg")
-        self.hero_texture = pygame.image.load("Resources/hero.png")
         self.red_arrow_texture = pygame.image.load("Resources/red_arrow.png")
-        self.half_wall1_texture = pygame.image.load("Resources/half_wall1.png")
-        self.half_wall2_texture = pygame.image.load("Resources/half_wall2.png")
         self.pause_texture = pygame.image.load("Resources/pause_image.png")
-        self.waves_texture = pygame.image.load("Resources/waves.png")
         self.attack_texture = pygame.image.load("Resources/attack.png")
         self.spikes_texture = pygame.image.load("Resources/spikes.png")
 
         self.item_textures = {
-            "Healing Potion": pygame.transform.scale(pygame.image.load("Resources/healing_potion.png"), (self.scale, self.scale)),
-            "Mana Potion": pygame.transform.scale(pygame.image.load("Resources/mana_potion.png"), (self.scale, self.scale)),
-            "Sword": pygame.transform.scale(pygame.image.load("Resources/sword.png"), (self.scale, self.scale)),
-            "Armour": pygame.transform.scale(pygame.image.load("Resources/armour.png"), (self.scale, self.scale)),
-            "Item": pygame.transform.scale(pygame.image.load("Resources/crate.png"), (self.scale, self.scale)),
-            "Bloody Sword": pygame.transform.scale(pygame.image.load("Resources/sword1.png"), (self.scale, self.scale)),
-            "Rusty Sword": pygame.transform.scale(pygame.image.load("Resources/sword2.png"), (self.scale, self.scale)),
-            "Good Armour": pygame.transform.scale(pygame.image.load("Resources/armour1.png"), (self.scale, self.scale)),
-            "Rusty Armour": pygame.transform.scale(pygame.image.load("Resources/armour2.png"), (self.scale, self.scale)),
-            "Crate": pygame.transform.scale(pygame.image.load("Resources/crate.png"), (self.scale, self.scale))
+            "Healing Potion": pygame.image.load("Resources/healing_potion.png"),
+            "Mana Potion": pygame.image.load("Resources/mana_potion.png"),
+            "Sword": pygame.image.load("Resources/sword.png"),
+            "Armour": pygame.image.load("Resources/armour.png"),
+            "Item": pygame.image.load("Resources/crate.png"),
+            "Bloody Sword": pygame.image.load("Resources/sword1.png"),
+            "Rusty Sword": pygame.image.load("Resources/sword2.png"),
+            "Good Armour": pygame.image.load("Resources/armour1.png"),
+            "Rusty Armour": pygame.image.load("Resources/armour2.png"),
+            "Crate": pygame.image.load("Resources/crate.png")
         }
 
         self.entity_textures = {
-            Hero: pygame.transform.scale(pygame.image.load("Resources/hero.png"), (self.scale, self.scale)),
-            Enemy: pygame.transform.scale(pygame.image.load("Resources/enemy.png"), (self.scale, self.scale)),
-            Trap: pygame.transform.scale(pygame.image.load("Resources/trap.png"), (self.scale, self.scale)),
-            Skel: pygame.transform.scale(pygame.image.load("Resources/skeleton.png"), (self.scale, self.scale))
+            "Hero": pygame.image.load("Resources/hero.png"),
+            "Regular Enemy": pygame.image.load("Resources/enemy.png"),
+            "Trap": pygame.image.load("Resources/trap.png"),
+            "Dedek": pygame.image.load("Resources/skeleton.png"),
+            "Boss1": pygame.image.load("Resources/boss1.png"),
+            "Boss2": pygame.image.load("Resources/boss2.png"),
         }
 
-        self.wall_texture = pygame.transform.scale(self.wall_texture, (self.scale, self.scale))
-        self.floor_texture = pygame.transform.scale(self.floor_texture, (self.scale, self.scale))
-        self.hero_texture = pygame.transform.scale(self.hero_texture, (self.scale, self.scale))
-        self.half_wall1_texture = pygame.transform.scale(self.half_wall1_texture, (self.scale, self.scale))
-        self.half_wall2_texture = pygame.transform.scale(self.half_wall2_texture, (self.scale, self.scale))
+        self.wall_textures = {
+            WallType.FULL: pygame.image.load("Resources/wall.jpg"),
+            WallType.EMPTY: pygame.image.load("Resources/floor.jpg"),
+            Directions.NORTH_EAST: pygame.image.load("Resources/half_wall1.png"),
+            Directions.SOUTH_EAST: pygame.image.load("Resources/half_wall4.png"),
+            Directions.SOUTH_WEST: pygame.image.load("Resources/half_wall2.png"),
+            Directions.NORTH_WEST: pygame.image.load("Resources/half_wall3.png"),
+            "Maze to Shop": pygame.image.load("Resources/teleport_maze_to_shop.png"),
+            "Shop to Boss": pygame.image.load("Resources/teleport_shop_to_boss.png")
+        }
+
         self.red_arrow_texture = pygame.transform.scale(self.red_arrow_texture, (self.scale, self.scale))
-        self.waves_texture = pygame.transform.scale(self.waves_texture, (self.scale, self.scale))
         self.attack_texture = pygame.transform.scale(self.attack_texture, (self.scale, self.scale))
         self.spikes_texture = pygame.transform.scale(self.spikes_texture, (self.scale, self.scale))
-
-        self.images = {
-            WallType.HALF: {
-                Directions.NORTH_EAST: pygame.transform.scale(pygame.image.load("Resources/half_wall1.png"),
-                                                         (self.scale, self.scale)),
-                Directions.SOUTH_EAST: pygame.transform.scale(pygame.image.load("Resources/half_wall4.png"),
-                                                         (self.scale, self.scale)),
-                Directions.SOUTH_WEST: pygame.transform.scale(pygame.image.load("Resources/half_wall2.png"),
-                                                            (self.scale, self.scale)),
-                Directions.NORTH_WEST: pygame.transform.scale(pygame.image.load("Resources/half_wall3.png"),
-                                                            (self.scale, self.scale)),
-            },
-        }
 
         self.pause_button = Button(800, 0, 200, 100, "Pause Game")
         self.quit_button = Button(800, 100, 200, 100, "Quit Game")
@@ -139,10 +129,12 @@ class Game:
 
         self.hero_money = self.hero.money
 
-        self.place_enemies(15)
+        self.place_enemies(15, 5)
 
-        self.checkpoint = Vector2d(5, 5)
+        self.checkpoint_shop = Vector2d(5, 5)
         self.in_maze = True
+        self.in_boss = False
+        self.in_shop = False
 
         weapon1 = Weapon("Bloody Sword", "A bloody sword", 10, 10, [Vector2d(0, 1)])
         armor1 = Armor("Good Armour", "A sturdy armour", 15, 3)
@@ -179,6 +171,9 @@ class Game:
             self.clock.tick(60)
             sleep(0.01)
         pygame.quit()
+
+    # def initialize_game(self):
+
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -271,7 +266,6 @@ class Game:
                         pygame.display.flip()
                         self.screen.fill((0, 0, 0))
                         self.run()
-
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.move_counter = 0
@@ -296,7 +290,6 @@ class Game:
         self.offset_y = screen_center_y - hero_global_y + 3
 
     def update(self):
-
         if self.hero.current_health <= 0:
             self.game_over = True
             return
@@ -321,26 +314,62 @@ class Game:
             print(self.hero_position)
             self.display_message("Not enough money!")
 
-        if self.hero.position == self.checkpoint:
+        if self.hero.position == self.checkpoint_shop:
             if self.in_maze:
                 self.go_to_shop()
-            else:
+            elif self.in_shop:
+                self.go_to_boss()
+            elif self.in_boss:
                 self.go_to_maze()
 
     def go_to_shop(self):
         self.transition_screen()
         self.in_maze = False
+        self.in_boss = False
+        self.in_shop = True
         pygame.display.flip()
         self.game_engine.go_to_shop()
         self.hero.position = Vector2d(15, 15)
         self.game_engine.map.add_entity(self.hero)
-        min_x, max_x, min_y, max_y = self.game_engine.map.map_dimensions()
-        self.checkpoint = Vector2d(5, 19)
+        self.checkpoint_shop = Vector2d(15, 29)
 
-    # def go_to_boss(self):
+    def go_to_boss(self):
+        self.transition_screen()
+        self.in_maze = False
+        self.in_shop = False
+        self.in_boss = True
+        pygame.display.flip()
+        self.game_engine.go_to_boss()
+        self.hero.position = Vector2d(10, 9)
+        self.game_engine.map.add_entity(self.hero)
+        self.checkpoint_shop = Vector2d(5, 5)
+        min_x, max_x, min_y, max_y = self.game_engine.map.map_dimensions()
+
+        name = random.choice(["Boss1", "Boss2"])
+
+        while True:
+            x = randint(min_x, max_x)
+            y = randint(min_y, max_y)
+            position = Vector2d(x, y)
+
+            if self.game_engine.map[position].wall.type != WallType.EMPTY:
+                continue
+
+            enemy_list_of_moves = [Directions.NORTH]
+            enemy_max_health = 20
+            enemy_direction = Directions.SOUTH
+            weapon = Weapon("Claws", "Sharp claws", 10, 5,
+                            [Vector2d(0, 1), Vector2d(1, 1), Vector2d(-1, 1), Vector2d(0, 2)])
+            boss = Enemy(name, 1, position, enemy_list_of_moves, enemy_max_health, enemy_direction, weapon)
+
+            self.game_engine.map.add_entity(boss)
+            print(f"Boss placed at {position}")
+            break
 
     def go_to_maze(self):
         self.transition_screen()
+        self.in_boss = False
+        self.in_shop = False
         self.in_maze = True
         self.run()
 
@@ -361,7 +390,6 @@ class Game:
         self.screen.blit(black_rect, (0, 0))
         pygame.display.flip()
         pass
-
 
     def draw_pause_screen(self):
         overlay = pygame.Surface((self.window_rex_x, self.window_rex_y))
@@ -396,83 +424,61 @@ class Game:
 
         pygame.display.flip()
 
+        boss_x = boss_y = 0
+        boss = None
+
         for tile_position, tile in map.tiles_dictionary.items():
             for cell_position, cell in tile.cells_dict.items():
-                min_x, max_x, min_y, max_y = self.game_engine.map.map_dimensions()
                 cells_in_tile = self.game_engine.map.cells_in_tile
                 global_x, global_y = tile_position.x * cells_in_tile + cell_position.x, tile_position.y * cells_in_tile + cell_position.y
                 x, y = (global_x + self.offset_x) / scale, (global_y + self.offset_y) / scale
-                if cell.wall.type == WallType.FULL or (not (min_x <= global_x <= max_x + map.cells_in_tile) or not (min_y <= global_y <= max_y + map.cells_in_tile )):
+                if cell.wall.type == WallType.FULL or cell.wall.type == WallType.EMPTY:
                     self.screen.blit(
-                        pygame.transform.scale(self.wall_texture, (self.scale // scale, self.scale // scale)),
+                        pygame.transform.scale(self.wall_textures[cell.wall.type], (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
                 elif cell.wall.type == WallType.HALF:
-                    # if type(cell.wall.facing) != Directions:
-                    #     continue
-                    image = self.images[cell.wall.type][cell.wall.facing]
                     self.screen.blit(
-                        pygame.transform.scale(self.floor_texture, (self.scale // scale, self.scale // scale)),
+                        pygame.transform.scale(self.wall_textures[WallType.EMPTY], (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
                     self.screen.blit(
-                        pygame.transform.scale(image, (self.scale // scale, self.scale // scale)),
+                        pygame.transform.scale(self.wall_textures[cell.wall.facing], (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
-                elif cell.wall.type == WallType.EMPTY:
-                    self.screen.blit(
-                        pygame.transform.scale(self.floor_texture, (self.scale // scale, self.scale // scale)),
-                        (x * self.scale, y * self.scale))
-                if any(isinstance(entity, Skel) for entity in cell.entities):
-                    self.screen.blit(
-                        pygame.transform.scale(self.entity_textures[Skel], (self.scale // scale, self.scale // scale)),
-                        (x * self.scale, y * self.scale))
-                if any(isinstance(entity, Hero) for entity in cell.entities):
-                    arrow_x = x
-                    arrow_y = y
-                    if self.hero.current_direction == Directions.NORTH:
-                        arrow_y -= 1
-                        image_rotated = pygame.transform.rotate(self.red_arrow_texture, 90)
+                for entity in cell.entities:
+                    if hasattr(entity, 'attack'):
+                        if isinstance(entity, Hero):
+                            self.screen.blit(
+                                pygame.transform.scale(
+                                    pygame.transform.rotate(self.red_arrow_texture, entity.current_direction.angle()),
+                                    (self.scale // scale, self.scale // scale)),
+                                (x * self.scale, y * self.scale))
+                        if entity.name == "Boss1" or entity.name == "Boss2":
+                            boss = entity.name
+                            boss_x, boss_y = x, y
+                        else:
+                            self.screen.blit(
+                                pygame.transform.scale(self.entity_textures[entity.name], (self.scale // scale, self.scale // scale)),
+                                (x * self.scale, y * self.scale))
+                if global_x == self.checkpoint_shop.x and global_y == self.checkpoint_shop.y:
+                    if self.in_maze:
                         self.screen.blit(
-                            pygame.transform.scale(image_rotated, (self.scale // scale, self.scale // scale)),
+                            pygame.transform.scale(self.wall_textures["Maze to Shop"], (self.scale // scale, self.scale // scale)),
                             (x * self.scale, y * self.scale))
-                    elif self.hero.current_direction == Directions.SOUTH:
-                        arrow_y += 1
-                        image_rotated = pygame.transform.rotate(self.red_arrow_texture, 270)
+                    elif self.in_shop:
                         self.screen.blit(
-                            pygame.transform.scale(image_rotated, (self.scale // scale, self.scale // scale)),
+                            pygame.transform.scale(self.wall_textures["Shop to Boss"], (self.scale // scale, self.scale // scale)),
                             (x * self.scale, y * self.scale))
-                    elif self.hero.current_direction == Directions.WEST:
-                        arrow_x -= 1
-                        image_rotated = pygame.transform.rotate(self.red_arrow_texture, 180)
-                        self.screen.blit(
-                            pygame.transform.scale(image_rotated, (self.scale // scale, self.scale // scale)),
-                            (x * self.scale, y * self.scale))
-                    elif self.hero.current_direction == Directions.EAST:
-                        arrow_x += 1
-                        image_rotated = pygame.transform.rotate(self.red_arrow_texture, 0)
-                        self.screen.blit(
-                            pygame.transform.scale(image_rotated, (self.scale // scale, self.scale // scale)),
-                            (x * self.scale, y * self.scale))
-                    self.screen.blit(
-                        pygame.transform.scale(self.entity_textures[Hero], (self.scale // scale, self.scale // scale)),
-                        (x * self.scale, y * self.scale))
-                if any(isinstance(entity, Enemy) for entity in cell.entities):
-                    self.screen.blit(
-                        pygame.transform.scale(self.entity_textures[Enemy], (self.scale // scale, self.scale // scale)),
-                        (x * self.scale, y * self.scale))
-                if any(isinstance(entity, Trap) for entity in cell.entities):
-                    self.screen.blit(
-                        pygame.transform.scale(self.entity_textures[Trap], (self.scale // scale, self.scale // scale)),
-                        (x * self.scale, y * self.scale))
-                if global_x == self.checkpoint.x and global_y == self.checkpoint.y:
-                    self.screen.blit(
-                        pygame.transform.scale(self.waves_texture, (self.scale // scale, self.scale // scale)),
-                        (x * self.scale, y * self.scale))
                 if cell.shop_item:
                     self.screen.blit(
-                        pygame.transform.scale(self.item_textures["Crate"], (self.scale // scale, self.scale // scale)),
+                        pygame.transform.scale(self.item_textures[cell.shop_item.item.name], (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
                     price = cell.shop_item.price
                     price_text = self.font.render(str(price), True, (0, 0, 0))
                     self.screen.blit(price_text, (x * self.scale, y * self.scale))
+        size = (self.scale // scale) * 4
+        if boss:
+            self.screen.blit(
+                pygame.transform.scale(self.entity_textures[boss], (size, size)),
+                (boss_x * self.scale, boss_y * self.scale))
 
     def draw_character_info(self):
         font = pygame.font.Font(None, 36)
@@ -498,7 +504,7 @@ class Game:
         self.screen.blit(weapon_text, (text_x, weapon_text_y))
         self.screen.blit(armor_text, (text_x, armor_text_y))
 
-    def place_enemies(self, num_enemies):
+    def place_enemies(self, num_enemies = 15, num_traps = 5):
         min_x, max_x, min_y, max_y = self.game_engine.map.map_dimensions()
         for _ in range(num_enemies):
             while True:
@@ -514,11 +520,11 @@ class Game:
                 enemy_direction = Directions.SOUTH
                 weapon = Weapon("Claws", "Sharp claws", 10, 5,
                                 [Vector2d(0, 1), Vector2d(1, 1), Vector2d(-1, 1), Vector2d(0, 2)])
-                enemy = Enemy(1, position, enemy_list_of_moves, enemy_max_health, enemy_direction, weapon)
+                enemy = Enemy("Regular Enemy", 1, position, enemy_list_of_moves, enemy_max_health, enemy_direction, weapon)
                 self.game_engine.map.add_entity(enemy)
                 print(f"Enemy placed at {position}")
                 break
-        for _ in range(5):
+        for _ in range(num_traps):
             while True:
                 x = randint(min_x, max_x)
                 y = randint(min_y, max_y)
@@ -529,7 +535,7 @@ class Game:
 
                 weapon = Weapon("Claws", "Sharp claws", 10, 5, [Vector2d(0, 1), Vector2d(1, 1), Vector2d(-1, 1), Vector2d(0, 2)])
 
-                trap = Trap(1, Vector2d(x, y), [], 10, Directions.NORTH, weapon)
+                trap = Trap("Trap", 1, Vector2d(x, y), [], 10, Directions.NORTH, weapon)
                 self.game_engine.map.add_entity(trap)
                 self.traps.append(trap)
                 break
@@ -591,11 +597,9 @@ class Game:
                 col = i % cards_per_row
                 x = start_x + col * card_width
                 y = start_y + row * card_height
-                image = self.images[card.wall.type][card.wall.facing]
-                scaled_image = pygame.transform.scale(image, (card_width, card_height))
                 if i == self.selected_card_index:
                     pygame.draw.rect(self.screen, (0, 255, 0), (x, y, card_width, card_height), 3)
-                self.screen.blit(scaled_image, (x, y))
+                self.screen.blit(pygame.transform.scale(self.wall_textures[card.wall.facing], (card_width, card_height)), (x, y))
 
     def draw_items(self):
         items_per_row = 2
@@ -620,7 +624,7 @@ class Game:
     def draw_attack(self):
         scale = 3
 
-        if not self.in_maze:
+        if self.in_shop:
             return
 
         for entity in self.game_engine.map.entities_list:
@@ -643,34 +647,20 @@ class Game:
                                          (x2 * self.scale, y2 * self.scale))
 
     def clear_areas_outside_map(self):
-        map_width, map_height = self.map_dimension_x, self.map_dimension_y
-        min_x, max_x, min_y, max_y = self.game_engine.map.map_dimensions()
+        map_left_pixel, map_right_pixel, map_top_pixel, map_bottom_pixel = self.map_screen_dimensions()
+        if map_left_pixel > 0:
+            self.screen.fill((0, 0, 0), (0, 0, map_left_pixel, self.map_dimension_y))
+        if map_right_pixel < self.window_rex_x:
+            self.screen.fill((0, 0, 0), (map_right_pixel, 0, self.map_dimension_x - map_right_pixel, self.map_dimension_y))
+        if map_top_pixel > 0:
+            self.screen.fill((0, 0, 0), (0, 0, self.map_dimension_x, map_top_pixel))
+        if map_bottom_pixel < self.window_rex_y:
+            self.screen.fill((0, 0, 0), (0, map_bottom_pixel, self.map_dimension_x, self.window_rex_y - map_bottom_pixel))
 
+    def map_screen_dimensions(self):
         scale = 3
-
-        map_left_pixel = (min_x + self.offset_x) * (self.scale // scale)
-        map_right_pixel = (max_x + self.offset_x) * (self.scale // scale)
-        map_top_pixel = (min_y + self.offset_y) * (self.scale // scale)
-        map_bottom_pixel = (max_y + self.offset_y) * (self.scale // scale)
-
-        if self.in_maze:
-            if map_left_pixel > 0:
-                self.screen.fill((0, 0, 0), (0, 0, map_left_pixel, map_height))
-            if map_right_pixel < self.window_rex_x:
-                self.screen.fill((0, 0, 0), (map_right_pixel, 0, self.map_dimension_x - map_right_pixel, map_height))
-            if map_top_pixel > 0:
-                self.screen.fill((0, 0, 0), (0, 0, map_width, map_top_pixel))
-            if map_bottom_pixel < self.window_rex_y:
-                self.screen.fill((0, 0, 0), (0, map_bottom_pixel, map_width, self.window_rex_y - map_bottom_pixel))
-        else:
-            if map_left_pixel > 0:
-                self.screen.fill((0, 0, 0), (0, 0, map_left_pixel, map_height))
-            if map_right_pixel < self.window_rex_x:
-                self.screen.fill((0, 0, 0), (map_right_pixel, 0, map_width - map_right_pixel, map_height))
-            if map_top_pixel > 0:
-                self.screen.fill((0, 0, 0), (0, 0, map_width, map_top_pixel))
-            if map_bottom_pixel < self.window_rex_y:
-                self.screen.fill((0, 0, 0), (0, map_bottom_pixel, map_width, map_height - map_bottom_pixel))
+        min_x, max_x, min_y, max_y = self.game_engine.map.map_dimensions()
+        return (min_x + self.offset_x) * (self.scale // scale), (max_x + self.offset_x) * (self.scale // scale), (min_y + self.offset_y) * (self.scale // scale), (max_y + self.offset_y) * (self.scale // scale)
 
 
 if __name__ == "__main__":
