@@ -1,11 +1,10 @@
-from enum import Enum
+from enum import IntEnum
 from .Entities.Items.Utility import Directions
-class WallType(Enum):
+class WallType(IntEnum):
     EMPTY=0
     FULL=1
     HALF=2
     STAIRS=3
-
 class Wall:
     '''
     type=0: facing doesn't matter

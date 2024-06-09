@@ -150,6 +150,7 @@ class Map:
         self.tiles_dictionary[Vector2d(1, -1)]=Tile(Vector2d(1,-1),{})
         self.tiles_dictionary[Vector2d(1, 0)]=Tile(Vector2d(1,0),{})
         self.tiles_dictionary[Vector2d(1, 1)]=Tile(Vector2d(1,1),{})
+<<<<<<< HEAD
 
         self.tiles_dictionary[Vector2d(-1, -1)].generate_demo_turn("lower right")
         self.tiles_dictionary[Vector2d(-1, 0)].generate_demo_straight("left", shop_tile=True)
@@ -159,6 +160,19 @@ class Map:
         self.tiles_dictionary[Vector2d(0, -1)].generate_demo_straight("up", shop_tile=True)
         self.tiles_dictionary[Vector2d(1, -1)].generate_demo_turn("lower left")
         self.tiles_dictionary[Vector2d(1, 0)].generate_demo_straight("right", shop_tile=True)
+=======
+        # print(self.tiles_dictionary.keys())
+        # for k in self.tiles_dictionary.keys():
+        #     print(k)
+        self.tiles_dictionary[Vector2d(-1, -1)].generate_demo_turn("lower right")
+        self.tiles_dictionary[Vector2d(-1, 0)].generate_demo_straight("left",shop_tile=True)
+        self.tiles_dictionary[Vector2d(-1, 1)].generate_demo_turn("upper right")
+        self.tiles_dictionary[Vector2d(0, 1)].generate_demo_straight("down",shop_tile=True)
+        self.tiles_dictionary[Vector2d(0, 0)].generate_demo_cross()
+        self.tiles_dictionary[Vector2d(0, -1)].generate_demo_straight("up",shop_tile=True)
+        self.tiles_dictionary[Vector2d(1, -1)].generate_demo_turn("lower left")
+        self.tiles_dictionary[Vector2d(1, 0)].generate_demo_straight("right",shop_tile=True)
+>>>>>>> origin/shop-demo
         self.tiles_dictionary[Vector2d(1, 1)].generate_demo_turn("upper left")
 
 

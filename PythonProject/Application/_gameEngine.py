@@ -1,5 +1,5 @@
-from Application.Map._map import Map
-from Application.Map.Entities.Items.Utility import Vector2d
+from Map._map import Map
+from Map.Entities.Items.Utility import Vector2d
 
 
 class GameEngine:

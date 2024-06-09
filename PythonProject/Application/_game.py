@@ -1,15 +1,23 @@
 import pygame
 
-from Application.Map.Entities import Skeleton as Skel
-from Application.Map.Entities import *
-from Application.Map.Entities.Items import *
+from Map.Entities import Skeleton as Skel
+from Map.Entities import *
+from Map.Entities.Items import *
 from Map.Entities.Items import HealingPotion
 from Map.Entities.Items import Armor
 from Map.Entities.Items import Weapon
+<<<<<<< HEAD
 from Application import *
 from Application.Map import WallType
 from Application.Map.Entities.Items.Utility import Vector2d, Directions
 from Application.Map.Entities.Items import Deck, Card
+=======
+from _button import Button
+from _gameEngine import GameEngine
+from Map import WallType
+from Map.Entities.Items.Utility import Vector2d, Directions
+from Map.Entities.Items import Deck
+>>>>>>> origin/shop-demo
 
 from time import sleep
 from random import randint
