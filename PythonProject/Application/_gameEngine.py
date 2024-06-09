@@ -1,15 +1,16 @@
-from Map._map import Map
-from Map.Entities.Items.Utility import Vector2d
-
+from Application.Map._map import Map
+from Application.Map.Entities.Items.Utility import Vector2d
+from .Map.map_maker import MapMaker
 
 class GameEngine:
     def __init__(self):
-        self.map = Map()
-        self.hero_position = Vector2d(0, 0)
-        self.map.generate_demo()
+        mm=MapMaker()
+        self.map = mm.create_map(3)
+        self.hero_position = Vector2d(5, 5)
+        # self.map.generate_demo()
         # self.map.generate_demo_shop()
 
     def go_to_shop(self):
         self.map = Map()
-        self.hero_position = Vector2d(0, 0)
+        self.hero_position = Vector2d(5, 5)
         self.map.generate_demo_shop()

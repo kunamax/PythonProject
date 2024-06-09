@@ -1,4 +1,4 @@
-from _button import Button
+from ._button import Button
 import pygame
 
 

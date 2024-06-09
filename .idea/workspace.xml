@@ -3,15 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="1fe2bd94-136e-48f2-8920-9056b3320c22" name="Changes" comment="works but i'm not sure about cleanliness of code">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/Items/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/Items/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/Items/_deck.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/Items/_deck.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/_map.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_map.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/_tile.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_tile.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/_wall.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_wall.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/map_maker.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/map_maker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/_game.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/_game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/_gameEngine.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/_gameEngine.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/test_inplememtaion.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/test_inplememtaion.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,13 +28,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/Users/szyme/PycharmProjects/PythonProject"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/nauka/PythonProject&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\szyme\PycharmProjects\PythonProject\PythonProject\Application\Map" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="PythonProject" />
@@ -104,9 +101,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PythonProject/Application/Map/_tile.py</url>
-          <line>74</line>
-          <option name="timeStamp" value="3" />
+          <url>file://$PROJECT_DIR$/PythonProject/Application/Map/_map.py</url>
+          <line>98</line>
+          <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

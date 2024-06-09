@@ -1,4 +1,4 @@
-from Application.Map._wall import Wall
+from ._wall import Wall
 
 
 class Card:
