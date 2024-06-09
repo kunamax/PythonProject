@@ -83,8 +83,10 @@ class Map:
                 next_cell_vector = next_cell_vector_candodate
             if next_wall.type == WallType.FULL:
                 next_cell_vector = next_cell_vector_candodate
+                entity.on_wall = True
             if next_wall.type == WallType.HALF:
                 next_cell_vector = entity.position
+                entity.on_wall = True
             if next_wall.type == WallType.STAIRS:
                 entity.current_direction = next_wall.facing
                 next_cell_vector = next_cell_vector_candodate
@@ -103,8 +105,6 @@ class Map:
                 else: #obroc
                     entity.current_direction=entity._handle_bouncle(entity.current_direction,next_wall.facing)
                     next_cell_vector = next_cell_vector_candodate
-            if isinstance(entity, Hero):
-                print(next_wall.type, next_wall.facing, entity.current_direction, next_cell_vector_candodate, next_cell_vector)
 
             if next_wall.type == WallType.STAIRS:
                 if next_wall.facing == entity.current_direction:
@@ -121,10 +121,9 @@ class Map:
                 entity.current_direction = entity._handle_bouncle(entity.current_direction, next_wall.facing)
 
         if next_wall.type == WallType.FULL and entity.on_wall:
-            entity.current_direction = entity._handle_bouncle(entity.current_direction.opposite.to_int(), next_wall.facing)
+            entity.current_direction = entity._handle_bouncle(entity.current_direction.opposite.to_int() + self[entity.position].wall.facing.to_int() + 1, next_wall.facing)
 
         min_x, max_x, min_y, max_y = self.map_dimensions()
-        print(max_x, max_y, next_cell_vector.x, next_cell_vector.y)
         if min_x <= next_cell_vector.x <= max_x and min_y <= next_cell_vector.y <= max_y:
             self[entity.position].entities.pop( self[entity.position].entities.index(entity))
             entity.position=next_cell_vector

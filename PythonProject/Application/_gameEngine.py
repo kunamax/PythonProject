@@ -11,6 +11,12 @@ class GameEngine:
         # self.map.generate_demo_shop()
 
     def go_to_shop(self):
-        self.map = Map()
-        self.hero_position = Vector2d(5, -10)
-        self.map.generate_demo_shop()
+        mm=MapMaker()
+        self.hero_position = Vector2d(15, 15)
+        # self.map = mm.create_shop(False)
+        self.map = mm.create_boss_arena()
+
+    def go_to_boss(self):
+        mm=MapMaker()
+        self.hero_position = Vector2d(4, 4)
+        self.map = mm.create_boss_arena()

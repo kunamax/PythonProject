@@ -121,15 +121,15 @@ class Tile:
         if shop_tile:
             shop_item_cell=self.cells_dict[Vector2d(4+random.randint(0,1),4+random.randint(0,1))]
             if location == "up":
-                shop_item_cell.shop_item=ShopItem(Armor("Rusty armor","Usefull garbage",10,1),7)
+                shop_item_cell.shop_item=ShopItem(Armor("Rusty Armour","Usefull garbage",10,1),7)
             if location == "down":
                 attacks=[Vector2d(x,y) for x,y in [(0,1),(0,2),(0,3),(1,0),(-1,0)]]
-                shop_item_cell.shop_item = ShopItem(Weapon("Longsword", "Designed for two-handed use",5,2,attacks),15)
+                shop_item_cell.shop_item = ShopItem(Weapon("Bloody Sword", "Designed for two-handed use",5,2,attacks),15)
             if location == "right":
-                shop_item_cell.shop_item=ShopItem(HealingPotion("Small healing potion","For noobies",1,2),2)
+                shop_item_cell.shop_item=ShopItem(HealingPotion("Healing Potion","For noobies",1,2),2)
             if location == "left":
                 attacks = [Vector2d(x, y) for x, y in [(-2, 0), (-2, 1), (-1, 1), (0, 1), (1, 1),(2,1),(2,0)]]
-                shop_item_cell.shop_item=ShopItem(Weapon("Battleshield", "Strange invention of a novice blacksmith", 7, 2, attacks),10)
+                shop_item_cell.shop_item=ShopItem(Weapon("Rusty Sword", "Strange invention of a novice blacksmith", 7, 2, attacks),10)
     def __hash__(self):
         return hash(self.lower_left_vector2d)
 

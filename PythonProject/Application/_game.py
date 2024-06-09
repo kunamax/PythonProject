@@ -48,37 +48,42 @@ class Game:
         self.wall_texture = pygame.image.load("Resources/wall.jpg")
         self.floor_texture = pygame.image.load("Resources/floor.jpg")
         self.hero_texture = pygame.image.load("Resources/hero.png")
-        self.enemy_texture = pygame.image.load("Resources/enemy.png")
-        self.trap_texture = pygame.image.load("Resources/trap.png")
-        self.skeleton_texture = pygame.image.load("Resources/skeleton.png")
         self.red_arrow_texture = pygame.image.load("Resources/red_arrow.png")
         self.half_wall1_texture = pygame.image.load("Resources/half_wall1.png")
         self.half_wall2_texture = pygame.image.load("Resources/half_wall2.png")
-        self.healing_potion_texture = pygame.image.load("Resources/healing_potion.png")
-        self.mana_potion_texture = pygame.image.load("Resources/mana_potion.png")
-        self.sword_texture = pygame.image.load("Resources/sword.png")
-        self.armour_texture = pygame.image.load("Resources/armour.png")
         self.pause_texture = pygame.image.load("Resources/pause_image.png")
         self.waves_texture = pygame.image.load("Resources/waves.png")
         self.attack_texture = pygame.image.load("Resources/attack.png")
-        self.item_texture = pygame.image.load("Resources/crate.png")
         self.spikes_texture = pygame.image.load("Resources/spikes.png")
+
+        self.item_textures = {
+            "Healing Potion": pygame.transform.scale(pygame.image.load("Resources/healing_potion.png"), (self.scale, self.scale)),
+            "Mana Potion": pygame.transform.scale(pygame.image.load("Resources/mana_potion.png"), (self.scale, self.scale)),
+            "Sword": pygame.transform.scale(pygame.image.load("Resources/sword.png"), (self.scale, self.scale)),
+            "Armour": pygame.transform.scale(pygame.image.load("Resources/armour.png"), (self.scale, self.scale)),
+            "Item": pygame.transform.scale(pygame.image.load("Resources/crate.png"), (self.scale, self.scale)),
+            "Bloody Sword": pygame.transform.scale(pygame.image.load("Resources/sword1.png"), (self.scale, self.scale)),
+            "Rusty Sword": pygame.transform.scale(pygame.image.load("Resources/sword2.png"), (self.scale, self.scale)),
+            "Good Armour": pygame.transform.scale(pygame.image.load("Resources/armour1.png"), (self.scale, self.scale)),
+            "Rusty Armour": pygame.transform.scale(pygame.image.load("Resources/armour2.png"), (self.scale, self.scale)),
+            "Crate": pygame.transform.scale(pygame.image.load("Resources/crate.png"), (self.scale, self.scale))
+        }
+
+        self.entity_textures = {
+            Hero: pygame.transform.scale(pygame.image.load("Resources/hero.png"), (self.scale, self.scale)),
+            Enemy: pygame.transform.scale(pygame.image.load("Resources/enemy.png"), (self.scale, self.scale)),
+            Trap: pygame.transform.scale(pygame.image.load("Resources/trap.png"), (self.scale, self.scale)),
+            Skel: pygame.transform.scale(pygame.image.load("Resources/skeleton.png"), (self.scale, self.scale))
+        }
+
         self.wall_texture = pygame.transform.scale(self.wall_texture, (self.scale, self.scale))
         self.floor_texture = pygame.transform.scale(self.floor_texture, (self.scale, self.scale))
         self.hero_texture = pygame.transform.scale(self.hero_texture, (self.scale, self.scale))
         self.half_wall1_texture = pygame.transform.scale(self.half_wall1_texture, (self.scale, self.scale))
         self.half_wall2_texture = pygame.transform.scale(self.half_wall2_texture, (self.scale, self.scale))
-        self.enemy_texture = pygame.transform.scale(self.enemy_texture, (self.scale, self.scale))
-        self.trap_texture = pygame.transform.scale(self.trap_texture, (self.scale, self.scale))
-        self.skeleton_texture = pygame.transform.scale(self.skeleton_texture, (self.scale, self.scale))
         self.red_arrow_texture = pygame.transform.scale(self.red_arrow_texture, (self.scale, self.scale))
-        self.healing_potion_texture = pygame.transform.scale(self.healing_potion_texture, (self.scale, self.scale))
-        self.mana_potion_texture = pygame.transform.scale(self.mana_potion_texture, (self.scale, self.scale))
-        self.sword_texture = pygame.transform.scale(self.sword_texture, (self.scale, self.scale))
-        self.armour_texture = pygame.transform.scale(self.armour_texture, (self.scale, self.scale))
         self.waves_texture = pygame.transform.scale(self.waves_texture, (self.scale, self.scale))
         self.attack_texture = pygame.transform.scale(self.attack_texture, (self.scale, self.scale))
-        self.item_texture = pygame.transform.scale(self.item_texture, (self.scale, self.scale))
         self.spikes_texture = pygame.transform.scale(self.spikes_texture, (self.scale, self.scale))
 
         self.images = {
@@ -114,7 +119,7 @@ class Game:
         weapon = Weapon("Sword", "A sharp blade", 10, 5, [Vector2d(0, 1),
                                                           Vector2d(1, 1), Vector2d(-1, 1), Vector2d(0, 2),
                                                           Vector2d(1, 2), Vector2d(-1, 2)])
-        armor = Armor("Shield", "A sturdy shield", 15, 3)
+        armor = Armor("Armour", "A sturdy armour", 15, 3)
         position = Vector2d(self.game_engine.hero_position.x, self.game_engine.hero_position.y)
         list_of_moves = []
         max_health = 100
@@ -132,7 +137,6 @@ class Game:
         self.hero.inventory.append(weapon)
         self.hero.inventory.append(armor)
 
-        self.inventory_size = len(self.hero.inventory)
         self.hero_money = self.hero.money
 
         self.place_enemies(15)
@@ -140,10 +144,22 @@ class Game:
         self.checkpoint = Vector2d(5, 5)
         self.in_maze = True
 
+        weapon1 = Weapon("Bloody Sword", "A bloody sword", 10, 10, [Vector2d(0, 1)])
+        armor1 = Armor("Good Armour", "A sturdy armour", 15, 3)
+        weapon2 = Weapon("Rusty Sword", "A bloody sword", 10, 10, [Vector2d(0, 1)])
+        armor2 = Armor("Rusty Armour", "A sturdy armour", 15, 3)
+
+        self.hero.inventory.append(weapon1)
+        self.hero.inventory.append(armor1)
+        self.hero.inventory.append(weapon2)
+        self.hero.inventory.append(armor2)
+
+
         self.equip_weapon(weapon)
         self.equip_armor(armor)
 
         self.set_offset()
+        self.inventory_size = len(self.hero.inventory)
 
         while self.running:
             if self.in_main_menu:
@@ -302,6 +318,7 @@ class Game:
             self.inventory_size = len(self.hero.inventory)
             self.hero_money = self.hero.money
         elif len(self.hero.inventory) == self.inventory_size and self.hero.money == self.hero_money and self.game_engine.map[self.hero.position].shop_item:
+            print(self.hero_position)
             self.display_message("Not enough money!")
 
         if self.hero.position == self.checkpoint:
@@ -315,10 +332,12 @@ class Game:
         self.in_maze = False
         pygame.display.flip()
         self.game_engine.go_to_shop()
-        self.hero.position = Vector2d(5, -10)
+        self.hero.position = Vector2d(15, 15)
         self.game_engine.map.add_entity(self.hero)
         min_x, max_x, min_y, max_y = self.game_engine.map.map_dimensions()
         self.checkpoint = Vector2d(5, 19)
+
+    # def go_to_boss(self):
 
     def go_to_maze(self):
         self.transition_screen()
@@ -403,7 +422,7 @@ class Game:
                         (x * self.scale, y * self.scale))
                 if any(isinstance(entity, Skel) for entity in cell.entities):
                     self.screen.blit(
-                        pygame.transform.scale(self.skeleton_texture, (self.scale // scale, self.scale // scale)),
+                        pygame.transform.scale(self.entity_textures[Skel], (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
                 if any(isinstance(entity, Hero) for entity in cell.entities):
                     arrow_x = x
@@ -433,15 +452,15 @@ class Game:
                             pygame.transform.scale(image_rotated, (self.scale // scale, self.scale // scale)),
                             (x * self.scale, y * self.scale))
                     self.screen.blit(
-                        pygame.transform.scale(self.hero_texture, (self.scale // scale, self.scale // scale)),
+                        pygame.transform.scale(self.entity_textures[Hero], (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
                 if any(isinstance(entity, Enemy) for entity in cell.entities):
                     self.screen.blit(
-                        pygame.transform.scale(self.enemy_texture, (self.scale // scale, self.scale // scale)),
+                        pygame.transform.scale(self.entity_textures[Enemy], (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
                 if any(isinstance(entity, Trap) for entity in cell.entities):
                     self.screen.blit(
-                        pygame.transform.scale(self.trap_texture, (self.scale // scale, self.scale // scale)),
+                        pygame.transform.scale(self.entity_textures[Trap], (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
                 if global_x == self.checkpoint.x and global_y == self.checkpoint.y:
                     self.screen.blit(
@@ -449,7 +468,7 @@ class Game:
                         (x * self.scale, y * self.scale))
                 if cell.shop_item:
                     self.screen.blit(
-                        pygame.transform.scale(self.item_texture, (self.scale // scale, self.scale // scale)),
+                        pygame.transform.scale(self.item_textures["Crate"], (self.scale // scale, self.scale // scale)),
                         (x * self.scale, y * self.scale))
                     price = cell.shop_item.price
                     price_text = self.font.render(str(price), True, (0, 0, 0))
@@ -539,7 +558,7 @@ class Game:
     def use_potion(self, potion):
         self.hero.use_item(potion)
 
-    def display_message(self, message):
+    def display_message(self, message): # 1, 14 bug
         font = pygame.font.Font(None, 36)
         text_surface = font.render(message, True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=(self.map_dimension_x / 2, self.map_dimension_y / 2))
@@ -590,15 +609,7 @@ class Game:
             col = i % items_per_row
             x = start_x + col * item_width
             y = start_y + row * item_height
-            if isinstance(item, HealingPotion):
-                scaled_image = pygame.transform.scale(self.healing_potion_texture, (item_width, item_height))
-            elif isinstance(item, ManaPotion):
-                scaled_image = pygame.transform.scale(self.mana_potion_texture, (item_width, item_height))
-            elif isinstance(item, Weapon):
-                scaled_image = pygame.transform.scale(self.sword_texture, (item_width, item_height))
-            elif isinstance(item, Armor):
-                scaled_image = pygame.transform.scale(self.armour_texture, (item_width, item_height))
-            self.screen.blit(scaled_image, (x, y))
+            self.screen.blit(pygame.transform.scale(self.item_textures[item.name], (item_width, item_height)), (x, y))
             if i == self.selected_equipment_index:
                 pygame.draw.rect(self.screen, (0, 255, 0), (x, y, item_width, item_height), 3)
             if i == self.index_of_equipped_weapon:
