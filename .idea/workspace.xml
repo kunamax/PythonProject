@@ -3,14 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="1fe2bd94-136e-48f2-8920-9056b3320c22" name="Changes" comment="works but i'm not sure about cleanliness of code">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/_map.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_map.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/_tile.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_tile.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/_wall.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_wall.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Entities/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Entities/_entity.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Entities/_hero.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Entities/_trap.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/test_inplememtaion.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/test_inplememtaion.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/map_maker.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/map_maker.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,6 +35,11 @@
     &quot;last_opened_file_path&quot;: &quot;C:/nauka/PythonProject&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\szyme\PycharmProjects\PythonProject\PythonProject\Application\Map" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="PythonProject" />
@@ -98,5 +96,16 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="works but i'm not sure about cleanliness of code" />
     <option name="LAST_COMMIT_MESSAGE" value="works but i'm not sure about cleanliness of code" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/PythonProject/Application/Map/_map.py</url>
+          <line>98</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
