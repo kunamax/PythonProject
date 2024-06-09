@@ -2,13 +2,16 @@ import random
 
 import pygame
 
-from Application.Map.Entities import Skeleton as Skel
-from Application.Map.Entities import Hero, Enemy, Trap
-from Application.Map.Entities.Items import Armor, Weapon, HealingPotion, ManaPotion
-from Application import *
-from Application.Map import WallType
-from Application.Map.Entities.Items.Utility import Vector2d, Directions
-from Application.Map import Deck
+from .Map.Entities import Skeleton as Skel
+from .Map.Entities import Hero, Enemy, Trap
+from .Map.Entities.Items import Armor, Weapon, HealingPotion, ManaPotion
+from ._button import Button
+from ._text import Text
+from ._gameEngine import GameEngine
+from .__mainMenu import MainMenu
+from .Map import WallType
+from .Map.Entities.Items.Utility import Vector2d, Directions
+from .Map import Deck
 
 from time import sleep
 from random import randint
@@ -322,14 +325,17 @@ class Game:
             elif self.in_boss:
                 self.go_to_maze()
 
-    def go_to_shop(self):
+    def go_to_shop(self,first_shop:bool=True):
         self.transition_screen()
         self.in_maze = False
         self.in_boss = False
         self.in_shop = True
         pygame.display.flip()
-        self.game_engine.go_to_shop()
-        self.hero.position = Vector2d(15, 15)
+        self.game_engine.go_to_shop(first_shop)
+        if  first_shop:
+            self.hero.position = Vector2d(15, 15)
+        else:
+            self.hero.position = Vector2d(15, 15)
         self.game_engine.map.add_entity(self.hero)
         self.checkpoint_shop = Vector2d(15, 29)
 
