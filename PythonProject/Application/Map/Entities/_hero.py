@@ -16,6 +16,8 @@ class Hero(Entity):
         self.inventory = []
         self.money:int=100
         self.alive = True
+        self.kills = 0
+        self.distance = 0
 
     def add_item(self, item)->None:
         self.inventory.append(item)
@@ -83,3 +85,6 @@ class Hero(Entity):
 
     def draw(self, screen)->None:
         pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(self.position[0], self.position[1], 50, 50))
+
+    def update_kills(self):
+        self.kills += 1

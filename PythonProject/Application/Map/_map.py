@@ -56,6 +56,8 @@ class Map:
                         break
                     damaged_ent.take_damage(ent.weapon.damage)
                     if not damaged_ent.alive:
+                        if isinstance(ent, Hero):
+                            ent.kills += 1
                         print("Died", damaged_ent.name)
                         ent.money+=damaged_ent.money
                         self.entities_list.pop(self.entities_list.index(damaged_ent))
@@ -125,6 +127,8 @@ class Map:
             self[entity.position].entities.pop( self[entity.position].entities.index(entity))
             entity.position=next_cell_vector
             self[entity.position].entities.append(entity)
+            if isinstance(entity, Hero):
+                entity.distance += 1
     def generate_demo(self)->None:
         size = 2
 

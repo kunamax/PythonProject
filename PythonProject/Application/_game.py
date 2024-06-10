@@ -2,16 +2,14 @@ import random
 
 import pygame
 
-from .Map.Entities import Skeleton as Skel
-from .Map.Entities import Hero, Enemy, Trap
-from .Map.Entities.Items import Armor, Weapon, HealingPotion, ManaPotion
-from ._button import Button
-from ._text import Text
-from ._gameEngine import GameEngine
-from .__mainMenu import MainMenu
-from .Map import WallType
-from .Map.Entities.Items.Utility import Vector2d, Directions
-from .Map import Deck
+from Application.Map.Entities import Skeleton as Skel
+from Application.Map.Entities import Hero, Enemy, Trap
+from Application.Map.Entities.Items import Armor, Weapon, HealingPotion, ManaPotion
+from Application import *
+from Application.Map import WallType
+from Application.Map.Entities.Items.Utility import Vector2d, Directions
+from Application.Map import Deck
+
 
 from time import sleep
 from random import randint
@@ -39,6 +37,8 @@ class Game:
         self.enemies = []
         self.traps = []
         self.deck = Deck()
+        self.deck_shop = Deck()
+        self.deck_shop.add_cards_shop()
         self.selected_card_index = None
         self.selected_potion_index = None
         self.selected_equipment_index = None
@@ -50,6 +50,10 @@ class Game:
         self.move_counter = 0
         self.offset_x = 4
         self.offset_y = 4
+
+        self.game_state = "maze"
+        self.game_sequence = ["maze", "shop", "maze", "shop", "boss"]
+        self.current_sequence_index = 0
 
         self.red_arrow_texture = pygame.image.load("Resources/red_arrow.png")
         self.pause_texture = pygame.image.load("Resources/pause_image.png")
@@ -87,7 +91,8 @@ class Game:
             Directions.SOUTH_WEST: pygame.image.load("Resources/half_wall2.png"),
             Directions.NORTH_WEST: pygame.image.load("Resources/half_wall3.png"),
             "Maze to Shop": pygame.image.load("Resources/teleport_maze_to_shop.png"),
-            "Shop to Boss": pygame.image.load("Resources/teleport_shop_to_boss.png")
+            "Shop to Boss": pygame.image.load("Resources/teleport_shop_to_boss.png"),
+            "Shop to Maze": pygame.image.load("Resources/teleport_shop_to_maze.png"),
         }
 
         self.red_arrow_texture = pygame.transform.scale(self.red_arrow_texture, (self.scale, self.scale))
@@ -102,7 +107,8 @@ class Game:
         self.weapon_button = Button(1000, 100, 200, 100, "Equip Weapon")
         self.armor_button = Button(1000, 200, 200, 100, "Equip Armor")
         self.new_game_button = Button(500, 400, 200, 100, "New Game")
-        self.game_over = False
+        self.game_over_won = False
+        self.game_over_lost = False
 
         self.game_engine = GameEngine()
         self.hero_position = Vector2d(2, 2)
@@ -165,9 +171,21 @@ class Game:
                     if event.type == pygame.QUIT:
                         self.running = False
                     elif event.type == pygame.MOUSEBUTTONDOWN:
-                        if self.main_menu.handle_events(event):
+                        if self.main_menu.handle_events(event) == 1:
+                            self.screen.fill((0, 0, 0))
                             self.in_main_menu = False
+                            self.paused = False
+                            self.current_sequence_index = 0
+                            self.run()
                             pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(0, 0, self.window_rex_x, self.window_rex_y))
+                        elif self.main_menu.handle_events(event) == -1:
+                            pygame.quit()
+                            quit()
+                        elif self.main_menu.handle_events(event) == 2:
+                            self.screen.fill((0, 0, 0))
+                            pygame.display.flip()
+                            self.paused = False
+                            self.in_main_menu = False
             else:
                 self.set_offset()
                 self.handle_events()
@@ -219,27 +237,30 @@ class Game:
                                        mouse_pos[1] // self.tile_size - self.offset_y)
                     if (self.game_engine.map[map_pos].wall.type == WallType.EMPTY
                             and self.game_engine.map[map_pos].entities == []):
-                        selected_card = self.deck.cards[self.selected_card_index]
+                        if self.in_shop:
+                            selected_card = self.deck_shop.cards[self.selected_card_index]
+                        else:
+                            selected_card = self.deck.cards[self.selected_card_index]
+                            self.deck.cards.pop(self.selected_card_index)
                         print(selected_card.wall.type, selected_card.wall.facing)
                         self.game_engine.map[map_pos].wall.type = selected_card.wall.type
                         self.game_engine.map[map_pos].wall.facing = selected_card.wall.facing
-                        self.deck.cards.pop(self.selected_card_index)
                         self.selected_card_index = None
                         self.placing_card = False
                 if self.pause_button.is_clicked(event):
-                    if self.paused:
-                        self.paused = False
-                    else:
+                    self.in_main_menu = True
+                    if not self.paused:
                         self.paused = True
-                        self.draw_pause_screen()
+                        self.screen.fill((0, 0, 0))
+                        pygame.display.flip()
+                        self.main_menu.draw_pause()
                 elif self.quit_button.is_clicked(event):
                     pygame.quit()
                     quit()
                 elif self.reset_button.is_clicked(event):
                     self.screen.fill((0, 0, 0))
+                    self.current_sequence_index = 0
                     self.run()
-                elif self.resume_button.is_clicked(event):
-                    self.paused = False
                 elif self.potion_button.is_clicked(event):
                     if self.selected_equipment_index is not None:
                         selected_item = self.hero.inventory[self.selected_equipment_index]
@@ -266,8 +287,8 @@ class Game:
                             self.index_of_equipped_armor = self.selected_equipment_index
                             self.selected_equipment_index = None
                 elif self.new_game_button.is_clicked(event):
-                    if self.game_over:
-                        self.game_over = False
+                    if self.game_over_won or self.game_over_lost:
+                        self.game_over_won = self.game_over_lost = False
                         pygame.display.flip()
                         self.screen.fill((0, 0, 0))
                         self.run()
@@ -296,7 +317,7 @@ class Game:
 
     def update(self):
         if self.hero.current_health <= 0:
-            self.game_over = True
+            self.game_over_lost = True
             return
 
         if self.hero.list_of_moves:
@@ -328,7 +349,7 @@ class Game:
                 self.screen.fill((0, 0, 0))
                 pygame.display.flip()
                 self.in_boss = False
-                self.game_over = True
+                self.game_over_won = True
 
 
         self.set_offset()
@@ -342,12 +363,15 @@ class Game:
             self.display_message("Not enough money!")
 
         if self.hero.position == self.checkpoint_shop:
-            if self.in_maze:
-                self.go_to_shop()
-            elif self.in_shop:
-                self.go_to_boss()
-            elif self.in_boss:
+            self.current_sequence_index += 1
+            self.game_state = self.game_sequence[self.current_sequence_index]
+
+            if self.game_state == "maze":
                 self.go_to_maze()
+            elif self.game_state == "shop":
+                self.go_to_shop(first_shop=(self.current_sequence_index == 1))
+            elif self.game_state == "boss":
+                self.go_to_boss()
 
     def go_to_shop(self,first_shop:bool=True):
         self.transition_screen()
@@ -356,12 +380,12 @@ class Game:
         self.in_shop = True
         pygame.display.flip()
         self.game_engine.go_to_shop(first_shop)
-        if  first_shop:
+        if first_shop:
             self.hero.position = Vector2d(15, 15)
         else:
-            self.hero.position = Vector2d(15, 15)
+            self.hero.position = Vector2d(15, 17)
         self.game_engine.map.add_entity(self.hero)
-        self.checkpoint_shop = Vector2d(15, 29)
+        self.checkpoint_shop = Vector2d(14, 27)
 
     def go_to_boss(self):
         self.transition_screen()
@@ -376,6 +400,8 @@ class Game:
         min_x, max_x, min_y, max_y = self.game_engine.map.map_dimensions()
 
         name = random.choice(["Boss1", "Boss2"])
+
+        self.place_enemies(0, 4)
 
         while True:
             x = randint(min_x, max_x)
@@ -421,22 +447,19 @@ class Game:
         pygame.display.flip()
         pass
 
-    def draw_pause_screen(self):
-        overlay = pygame.Surface((self.window_rex_x, self.window_rex_y))
-        overlay.fill((0, 0, 0))
-        overlay.set_alpha(60)
-        self.screen.blit(overlay, (0, 0))
-        self.resume_button.draw(self.screen)
-        pygame.display.flip()
-
     def draw(self):
         if self.paused:
-            self.draw_pause_screen()
-        elif self.game_over:
-            self.draw_game_over_screen()
+            self.main_menu.draw_pause()
+        elif self.game_over_won:
+            self.draw_game_over_screen("Won!")
+        elif self.game_over_lost:
+            self.draw_game_over_screen("Lost!")
         else:
             self.draw_map()
-            self.draw_cards()
+            if self.in_shop:
+                self.draw_cards(self.deck_shop)
+            else:
+                self.draw_cards(self.deck)
             self.draw_items()
             self.draw_character_info()
             self.pause_button.draw(self.screen)
@@ -482,21 +505,26 @@ class Game:
                                     (self.scale // scale, self.scale // scale)),
                                 (x * self.scale, y * self.scale))
                         if entity.name == "Boss1" or entity.name == "Boss2":
-                            boss = entity.name
+                            boss = entity
                             boss_x, boss_y = x, y
                         else:
                             self.screen.blit(
                                 pygame.transform.scale(self.entity_textures[entity.name], (self.scale // scale, self.scale // scale)),
                                 (x * self.scale, y * self.scale))
                 if global_x == self.checkpoint_shop.x and global_y == self.checkpoint_shop.y:
-                    if self.in_maze:
+                    if self.current_sequence_index == 0 or self.current_sequence_index == 2:
                         self.screen.blit(
                             pygame.transform.scale(self.wall_textures["Maze to Shop"], (self.scale // scale, self.scale // scale)),
                             (x * self.scale, y * self.scale))
-                    elif self.in_shop:
+                    elif self.current_sequence_index == 3:
                         self.screen.blit(
                             pygame.transform.scale(self.wall_textures["Shop to Boss"], (self.scale // scale, self.scale // scale)),
                             (x * self.scale, y * self.scale))
+                    elif self.current_sequence_index == 1:
+                        self.screen.blit(
+                            pygame.transform.scale(self.wall_textures["Shop to Maze"], (self.scale // scale, self.scale // scale)),
+                            (x * self.scale, y * self.scale))
+
                 if cell.shop_item:
                     self.screen.blit(
                         pygame.transform.scale(self.item_textures[cell.shop_item.item.name], (self.scale // scale, self.scale // scale)),
@@ -507,15 +535,33 @@ class Game:
         size = (self.scale // scale) * 4
         if boss:
             self.screen.blit(
-                pygame.transform.scale(self.entity_textures[boss], (size, size)),
+                pygame.transform.scale(self.entity_textures[boss.name], (size, size)),
                 (boss_x * self.scale, boss_y * self.scale))
+            self.draw_health_bar(boss)
+
+    def draw_health_bar(self, entity):
+        max_health = entity.max_health
+        current_health = entity.current_health
+        health_ratio = current_health / max_health
+
+        scale = 3
+
+        bar_width = self.scale
+        bar_height = 5
+
+        bar_x = (entity.position.x + self.offset_x + 0.5) / scale
+        bar_y = (entity.position.y + self.offset_y + 4) / scale
+
+        pygame.draw.rect(self.screen, (255, 0, 0), (bar_x * self.scale, bar_y * self.scale, bar_width, bar_height))
+
+        pygame.draw.rect(self.screen, (0, 255, 0), (bar_x * self.scale, bar_y * self.scale, bar_width * health_ratio, bar_height))
 
     def draw_character_info(self):
-        font = pygame.font.Font(None, 36)
+        font = pygame.font.Font(None, 26)
 
         hp_text = font.render(f"HP: {self.hero.current_health}", True, (255, 255, 255))
         gold_text = font.render(f"Gold: {self.hero.money}", True, (255, 255, 255))
-        position_text = font.render(f"Position: {self.hero.position}", True, (255, 255, 255))
+        position_text = font.render(f"Distance: {self.hero.distance}", True, (255, 255, 255))
 
         weapon_text = font.render(f"Weapon: {self.hero.weapon.name if self.hero.weapon else 'None'}", True,
                                   (255, 255, 255))
@@ -594,7 +640,7 @@ class Game:
     def use_potion(self, potion):
         self.hero.use_item(potion)
 
-    def display_message(self, message): # 1, 14 bug
+    def display_message(self, message):
         font = pygame.font.Font(None, 36)
         text_surface = font.render(message, True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=(self.map_dimension_x / 2, self.map_dimension_y / 2))
@@ -603,25 +649,33 @@ class Game:
         pygame.time.wait(2000)
         pygame.draw.rect(self.screen, (0, 0, 0), text_rect)
 
-    def draw_game_over_screen(self):
+    def draw_game_over_screen(self, result):
         overlay = pygame.Surface((self.window_rex_x, self.window_rex_y))
         overlay.fill((0, 0, 0))
         overlay.set_alpha(60)
         self.screen.blit(overlay, (0, 0))
-        game_over_text = self.font.render("Game Over", True, (255, 255, 255))
+        game_over_text = self.font.render(f"Game Over, You {result}", True, (255, 255, 255))
         text_rect = game_over_text.get_rect(center=(self.window_rex_x / 2, self.map_dimension_y / 4))
         self.screen.blit(game_over_text, text_rect)
+        distance_text = self.font.render(f"Distance travelled: {self.hero.distance}", True, (255, 255, 255))
+        enemies_text = self.font.render(f"Enemies killed: {self.hero.kills}", True, (255, 255, 255))
+
+        distance_rect = distance_text.get_rect(center=(self.window_rex_x / 2, (self.map_dimension_y / 4) + 50))
+        enemies_rect = enemies_text.get_rect(center=(self.window_rex_x / 2, (self.map_dimension_y / 4) + 100))
+
+        self.screen.blit(distance_text, distance_rect)
+        self.screen.blit(enemies_text, enemies_rect)
         self.new_game_button.draw(self.screen)
         pygame.display.flip()
 
-    def draw_cards(self):
+    def draw_cards(self, deck):
         cards_per_row = 2
         card_width, card_height = 100, 50
         start_x, start_y = 800, 300
 
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(800, 0, 400, 800))
 
-        for i, card in enumerate(self.deck.cards):
+        for i, card in enumerate(deck.cards):
             if card.wall.type == WallType.HALF:
                 row = i // cards_per_row
                 col = i % cards_per_row
