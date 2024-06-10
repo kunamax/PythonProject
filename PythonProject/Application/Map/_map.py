@@ -65,72 +65,15 @@ class Map:
                         skeleton = Skeleton("Dedek", position, Directions.NORTH)
                         self.entities_list.append(skeleton)
                         self[position].entities.append(skeleton)
-    def __move_entity123(self,entity:Entity)->None:
-        if not entity.list_of_moves:
-            return
-        if isinstance(entity, Enemy):
-            entity.random_direction()
-            entity.random_direction()
-        #next_cell_vector_candodate = entity.position + entity.current_direction.rotate_vector(entity.list_of_moves[entity.move_index].to_vector2d())
-        if entity.current_direction == Directions.NORTH or entity.current_direction == Directions.SOUTH:
-            next_cell_vector_candodate = entity.position + entity.current_direction.opposite.to_vector2d()
-        else:
-            next_cell_vector_candodate = entity.position + entity.current_direction.to_vector2d()
-        next_wall = self[next_cell_vector_candodate].wall
-        next_cell_vector = None
-
-        if entity.on_wall:
-            if next_wall.type == WallType.EMPTY:
-                entity.on_wall = False
-                next_cell_vector = next_cell_vector_candodate
-            if next_wall.type == WallType.FULL:
-                next_cell_vector = next_cell_vector_candodate
-                entity.on_wall = True
-            if next_wall.type == WallType.HALF:
-                next_cell_vector = entity.position
-                entity.on_wall = True
-            if next_wall.type == WallType.STAIRS:
-                entity.current_direction = next_wall.facing
-                next_cell_vector = next_cell_vector_candodate
-        else:
-            if next_wall.type == WallType.EMPTY:
-                next_cell_vector = next_cell_vector_candodate
-            if next_wall.type == WallType.FULL:
-                entity.current_direction = entity.current_direction.opposite
-                next_cell_vector = entity.position
-
-            if next_wall.type == WallType.HALF:
-                if abs(entity.current_direction.to_int() - next_wall.facing.to_int())==1\
-                        or abs(entity.current_direction.to_int() - next_wall.facing.to_int())==7:
-                    entity.current_direction = entity.current_direction.opposite
-                    next_cell_vector = entity.position
-                else: #obroc
-                    entity.current_direction=entity._handle_bouncle(entity.current_direction,next_wall.facing)
-                    next_cell_vector = next_cell_vector_candodate
-
-            if next_wall.type == WallType.STAIRS:
-                if next_wall.facing == entity.current_direction:
-                    entity.on_wall = True
-                    next_cell_vector = next_cell_vector_candodate
-                else:
-                    entity.current_direction = entity.current_direction.opposite()
-                    next_cell_vector = entity.position
-
-        next_wall = self[next_cell_vector].wall
-        if next_wall.type == WallType.HALF and entity.on_wall:
-            if not (abs(entity.current_direction.to_int() - next_wall.facing.to_int())==1\
-                        or abs(entity.current_direction.to_int() - next_wall.facing.to_int())==7):
-                entity.current_direction = entity._handle_bouncle(entity.current_direction, next_wall.facing)
-
-        min_x, max_x, min_y, max_y = self.map_dimensions()
-        if min_x <= next_cell_vector.x <= max_x and min_y <= next_cell_vector.y <= max_y:
-            self[entity.position].entities.pop( self[entity.position].entities.index(entity))
-            entity.position=next_cell_vector
-            self[entity.position].entities.append(entity)
-            if isinstance(entity, Hero):
-                entity.distance += 1
-
     def __move_entity(self, entity: Entity) -> None:
+        def handle_bounce(a, b):
+            if a % 2 == 0:
+                a, b = b, a
+            if (a + 1) % 8 == b:
+                return (a - 1) % 8
+            else:
+                return (a + 1) % 8
+
         if len(entity.list_of_moves)==0:
             return
         curr_position=entity.position
@@ -161,7 +104,7 @@ class Map:
 
         if self[curr_position].wall.type == WallType.HALF and self[next_position].wall.type == WallType.FULL:
             next_cell_vector = curr_position
-            entity.current_direction = Directions(self.xd(entity.current_direction.to_int(),self[curr_position].wall.facing.to_int()))
+            entity.current_direction = Directions(handle_bounce(entity.current_direction.to_int(),self[curr_position].wall.facing.to_int()))
 
 
         if self[curr_position].wall.type == WallType.HALF and self[next_position].wall.type == WallType.HALF:
@@ -169,7 +112,7 @@ class Map:
                     or abs(entity.current_direction.to_int() - self[next_position].wall.facing.to_int()) == 7:
                 next_cell_vector = curr_position
                 entity.current_direction = Directions(
-                    self.xd(entity.current_direction.to_int(), self[curr_position].wall.facing.to_int()))
+                    handle_bounce(entity.current_direction.to_int(), self[curr_position].wall.facing.to_int()))
             else:
                 tmp = entity.current_direction.opposite.to_int() - self[next_position].wall.facing.to_int()
                 entity.current_direction = Directions((self[next_position].wall.facing.to_int() - tmp) % 8)
@@ -199,13 +142,7 @@ class Map:
     #         return Directions( (w_facing.to_int()-tmp)%8 )
     #         entity.current_direction = entity._handle_bouncle(entity.current_direction, next_wall.facing)
     #         next_cell_vector = next_cell_vector_candodate
-    def xd(self,a,b):
-        if a%2==0:
-            a,b=b,a
-        if (a+1)%8==b:
-            return (a-1)%8
-        else:
-            return (a+1)%8
+
     def generate_demo(self)->None:
         size = 2
 
