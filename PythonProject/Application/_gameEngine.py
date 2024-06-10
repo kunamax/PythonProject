@@ -8,10 +8,14 @@ class GameEngine:
         self.map = mm.create_map(3)
         self.hero_position = Vector2d(2, 2)
 
-    def go_to_shop(self):
+    def go_to_shop(self,first_shop:bool=True):
         mm=MapMaker()
-        self.hero_position = Vector2d(15, 15)
-        self.map = mm.create_shop()
+        if first_shop:
+            self.hero_position = Vector2d(15, 15)
+            self.map = mm.create_shop()
+        else:
+            self.hero_position = Vector2d(4, 4)
+            self.map = mm.create_shop(first_shop=False)
 
     def go_to_boss(self):
         mm=MapMaker()

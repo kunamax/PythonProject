@@ -319,28 +319,28 @@ class MapMaker():
                 map.tiles_dictionary[Vector2d(y, x)] = self.create_tile(str_arr[x][y], Vector2d(x, y))
         return map
 
-    def create_shop(self,fist_shop:bool=True) -> Map:
+    def create_shop(self,first_shop:bool=True) -> Map:
         size = 3
         str_arr = [[copy.deepcopy("?") for _ in range(size)] for _ in range(size)]
-        if fist_shop:
+        if first_shop:
             str_arr[0][0] = "2112"
-            str_arr[0][1] = "1112"
-            str_arr[0][2] = "1122"
-            str_arr[1][0] = "2111"
+            str_arr[0][1] = "2111"
+            str_arr[0][2] = "2211"
+            str_arr[1][0] = "1112"
             str_arr[1][1] = "mid shop"
-            str_arr[1][2] = "1121"
-            str_arr[2][0] = "2211"
-            str_arr[2][1] = "1211"
+            str_arr[1][2] = "1211"
+            str_arr[2][0] = "1122"
+            str_arr[2][1] = "1121"
             str_arr[2][2] = "1221"
         else:
             str_arr[0][0] = "2002"
-            str_arr[0][1] = "0002"
-            str_arr[0][2] = "0022"
-            str_arr[1][0] = "2000"
+            str_arr[1][0] = "0002"
+            str_arr[2][0] = "0022"
+            str_arr[0][1] = "2000"
             str_arr[1][1] = "0000"
-            str_arr[1][2] = "0020"
-            str_arr[2][0] = "2200"
-            str_arr[2][1] = "0200"
+            str_arr[2][1] = "0020"
+            str_arr[0][2] = "2200"
+            str_arr[1][2] = "0200"
             str_arr[2][2] = "0220"
         for lane in str_arr:
             print(lane)
