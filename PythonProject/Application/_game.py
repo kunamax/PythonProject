@@ -42,6 +42,7 @@ class Game:
         self.index_of_equipped_weapon = None
         self.index_of_equipped_armor = None
         self.placing_card = False
+        self.hero_moving = False
         self.images = {}
         self.move_counter = 0
         self.offset_x = 4
@@ -51,6 +52,7 @@ class Game:
         self.pause_texture = pygame.image.load("Resources/pause_image.png")
         self.attack_texture = pygame.image.load("Resources/attack.png")
         self.spikes_texture = pygame.image.load("Resources/spikes.png")
+        self.low_hp_texture = pygame.image.load("Resources/blood_drops.png")
 
         self.item_textures = {
             "Healing Potion": pygame.image.load("Resources/healing_potion.png"),
@@ -272,7 +274,7 @@ class Game:
                     self.hero.list_of_moves = [Directions.SOUTH] * 5
                     for enemy in self.enemies:
                         enemy.list_of_moves = [Directions.NORTH] * 5
-                if self.game_engine.map[self.hero.position].wall.type != WallType.HALF:
+                if self.game_engine.map[self.hero.position].wall.type != WallType.HALF and not self.hero_moving:
                     if event.key == pygame.K_UP:
                         self.hero.current_direction = Directions.NORTH
                     elif event.key == pygame.K_DOWN:
@@ -295,15 +297,37 @@ class Game:
             return
 
         if self.hero.list_of_moves:
+            self.hero_moving = True
+            previous_hp = self.hero.current_health
             self.draw_attack()
             self.hero_attacking = True
             self.game_engine.map.perform_turn()
+            if previous_hp != self.hero.current_health and previous_hp >= self.hero.max_health // 5 > self.hero.current_health:
+                self.display_message("Low health!")
             self.move_counter += 1
             if self.move_counter == 5:
                 self.hero.list_of_moves = []
+        else:
+            self.hero_moving = False
+            self.hero_attacking = False
         for enemy in self.enemies:
             if enemy.list_of_moves:
                 enemy.list_of_moves.pop(0)
+        won = True
+        if self.in_boss:
+            for ent in self.game_engine.map.entities_list:
+                if isinstance(ent, Enemy):
+                    won = False
+            if won:
+                self.display_message("You won!")
+                sleep(1)
+                pygame.display.flip()
+                self.screen.fill((0, 0, 0))
+                pygame.display.flip()
+                self.in_boss = False
+                self.game_over = True
+
+
         self.set_offset()
 
         if len(self.hero.inventory) > self.inventory_size and self.hero.money != self.hero_money:
