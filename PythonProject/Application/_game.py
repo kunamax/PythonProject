@@ -2,13 +2,16 @@ import random
 
 import pygame
 
-from Application.Map.Entities import Skeleton as Skel
-from Application.Map.Entities import Hero, Enemy, Trap
-from Application.Map.Entities.Items import Armor, Weapon, HealingPotion, ManaPotion
-from Application import *
-from Application.Map import WallType
-from Application.Map.Entities.Items.Utility import Vector2d, Directions
-from Application.Map import Deck
+from .Map.Entities import Skeleton as Skel
+from .Map.Entities import Hero, Enemy, Trap
+from .Map.Entities.Items import Armor, Weapon, HealingPotion, ManaPotion
+from ._button import Button
+from ._gameEngine import GameEngine
+from ._text import Text
+from .__mainMenu import MainMenu
+from .Map import WallType
+from .Map.Entities.Items.Utility import Vector2d, Directions
+from .Map import Deck
 
 
 from time import sleep
@@ -295,9 +298,9 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.move_counter = 0
-                    self.hero.list_of_moves = [Directions.SOUTH] * 5
+                    self.hero.list_of_moves = [Directions.NORTH] * 5#TODO usunac
                     for enemy in self.enemies:
-                        enemy.list_of_moves = [Directions.NORTH] * 5
+                        enemy.list_of_moves = [Directions.NORTH] * 5#TODO usunac
                 if self.game_engine.map[self.hero.position].wall.type != WallType.HALF and not self.hero_moving:
                     if event.key == pygame.K_UP:
                         self.hero.current_direction = Directions.NORTH

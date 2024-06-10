@@ -17,12 +17,12 @@ class Entity(abc):
         self.money:int=randint(2,5)
         self.weapon = weapon
         self.alive = True
-        self.on_wall = False
         self.interaction = True
 
-    def _handle_bouncle(self,e_facing:Directions,w_facing:Directions)->Directions:
-        tmp=e_facing.opposite.to_int()-w_facing.to_int()
-        return Directions( (w_facing.to_int()-tmp)%8 )
+
+    def get_next_move(self):
+        self.move_index= (self.move_index+1) % len(self.list_of_moves)
+        return self.current_direction.rotate_vector(self.list_of_moves[self.move_index].to_vector2d())
     def attack(self) -> list[Vector2d]:
         cells_to_attack = [self.position + self.current_direction.rotate_vector(attack) for attack in
                            self.weapon.list_of_attacks]
