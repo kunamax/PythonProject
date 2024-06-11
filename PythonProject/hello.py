@@ -1,6 +1,5 @@
 import cmd, sys
-from Entities import Character
-from Utility import Direction
+from Entities import _hero
 
 class HelloWorld(cmd.Cmd):
     intro = 'Welcome to the turtle shell.   Type help or ? to list commands.\n'
@@ -83,7 +82,7 @@ if __name__ == "__main__":
 
 def parse(arg):
     'Convert a series of zero or more numbers to an argument tuple'
-    return tuple(map(int, arg.split()))
+    return tuple(Map(int, arg.split()))
 
 if __name__ == '__main__':
     TurtleShell().cmdloop()'''
