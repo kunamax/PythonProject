@@ -18,9 +18,9 @@ class MapMaker():
             # FULL = 1
             "X": Wall(WallType(1), Directions(0)),
             # HALF = 2
-            "1": Wall(WallType(2), Directions(1)),
+            "1": Wall(WallType(2), Directions(5)),
             "3": Wall(WallType(2), Directions(3)),
-            "5": Wall(WallType(2), Directions(5)),
+            "5": Wall(WallType(2), Directions(1)),
             "7": Wall(WallType(2), Directions(7))
         }
         self.str_cells_dict = {
@@ -192,16 +192,17 @@ class MapMaker():
                      "_________X",
                      "_________X",
                      "7X1____7XX"],
-            "0211": ["1________7",
-                     "X17X1___7X",
-                     "XXXXX__7XX",
-                     "3_5X3__XXX",
-                     "______7XXX",
-                     "_____73_XX",
-                     "7X1_7X1_5X",
-                     "XXX_XXX_7X",
-                     "X3__5X3_5X",
-                     "3________5"],
+            "0112": ["1________7",
+                     "X1______XX",
+                     "XX1__X17XX",
+                     "XXX__5XXX3",
+                     "X5X1__5X3_",
+                     "X_5X1_____",
+                     "X__53_____",
+                     "X________7",
+                     "X1_______X",
+                     "XX1____7XX"],
+
             "0221": ["1________7",
                      "X________X",
                      "X1______7X",
@@ -215,7 +216,7 @@ class MapMaker():
             "0201": ["1________7",
                      "X17X1___7X",
                      "XXXXX__7XX",
-                     "3_5X3__XXX",
+                     "__5X3__XXX",
                      "______7XXX",
                      "_____73_XX",
                      "7X1_7X1_5X",
@@ -245,27 +246,41 @@ class MapMaker():
         }
         keys = copy.deepcopy(self.str_cells_dict)
         for key in keys:
+
             # right
             new_key, new_str = self.right_rotation(key)
             self.str_cells_dict[new_key] = new_str
+            
             # right
             new_key, new_str = self.right_rotation(new_key)
             self.str_cells_dict[new_key] = new_str
+            
+
             # right
             new_key, new_str = self.right_rotation(new_key)
             self.str_cells_dict[new_key] = new_str
+            
+
             # horizontal
             new_key, new_str = self.horizontal_rotation(new_key)
             self.str_cells_dict[new_key] = new_str
+            
+
             # right
             new_key, new_str = self.right_rotation(new_key)
             self.str_cells_dict[new_key] = new_str
+            
+
             # right
             new_key, new_str = self.right_rotation(new_key)
             self.str_cells_dict[new_key] = new_str
+            
+
             # right
             new_key, new_str = self.right_rotation(new_key)
             self.str_cells_dict[new_key] = new_str
+            
+
         self.str_cells_dict["mid shop"] = ["XXX____XXX",
                                            "XXX____XXX",
                                            "XX3____5XX",
@@ -290,7 +305,7 @@ class MapMaker():
     def create_map(self, size) -> Map:
         junction_arr = [[] for _ in range(size * 2 + 1)]
         for x in range(len(junction_arr)):
-            junction_arr[x] = ["?" for i in range(size + (x % 2))]
+            junction_arr[x] = ["?" for _ in range(size + (x % 2))]
         for x in range(size):
             for y in range(size + 1):
                 if y == 0 or y == size:
@@ -327,13 +342,14 @@ class MapMaker():
                                 junction_arr[(x + 1) * 2][y] + junction_arr[x * 2 + 1][y]
                 # str_arr[x][y]="2021"
         str_arr[size-1][size-1]="end"
-        for lane in str_arr:
-            print(lane)
-        print()
+        # for lane in str_arr:
+        #     print(lane)
+        # print()
         map = Map()
         for x in range(size):
             for y in range(size):
-                map.tiles_dictionary[Vector2d(y, x)] = self.create_tile(str_arr[x][y], Vector2d(x, y))
+                map.tiles_dictionary[Vector2d(y, x)] = self.create_tile(str_arr[y][x], Vector2d(y,x))
+
         return map
 
     def create_shop(self, first_shop: bool = True) -> Map:
@@ -414,14 +430,14 @@ class MapMaker():
             str_arr[0][2] = "2200"
             str_arr[1][2] = "0200"
             str_arr[2][2] = "0220"
-        for lane in str_arr:
-            print(lane)
-        print()
+        # for lane in str_arr:
+        #     print(lane)
+        # print()
         map = Map()
         shop_candidates = []
         for x in range(size):
             for y in range(size):
-                map.tiles_dictionary[Vector2d(y, x)] = self.create_tile(str_arr[x][y], Vector2d(x, y))
+                map.tiles_dictionary[Vector2d(y, x)] = self.create_tile(str_arr[y][x], Vector2d(x, y))
         for x in range(size * 10):
             for y in range(size * 10):
                 if map[Vector2d(x, y)].wall.type == WallType.EMPTY:
@@ -468,7 +484,7 @@ class MapMaker():
         map = Map()
         for x in range(size):
             for y in range(size):
-                map.tiles_dictionary[Vector2d(y, x)] = self.create_tile(str_arr[x][y], Vector2d(x, y))
+                map.tiles_dictionary[Vector2d(y, x)] = self.create_tile(str_arr[y][x], Vector2d(x, y))
         return map
 
     def create_tile(self, id: str, vector: Vector2d) -> Tile:
@@ -477,7 +493,7 @@ class MapMaker():
         str_tile = self.str_cells_dict[id]
         for x in range(10):
             for y in range(10):
-                tile.cells_dict[Vector2d(y, x)] = copy.deepcopy(Cell(self.walls_dict[str_tile[x][y]], []))
+                tile.cells_dict[Vector2d(y, x)] = copy.deepcopy(Cell(self.walls_dict[str_tile[y][x]], []))
 
         return copy.deepcopy(tile)
 
