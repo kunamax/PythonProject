@@ -2,16 +2,13 @@ import random
 
 import pygame
 
-from .Map.Entities import Skeleton as Skel
-from .Map.Entities import Hero, Enemy, Trap
-from .Map.Entities.Items import Armor, Weapon, HealingPotion, ManaPotion
-from ._button import Button
-from ._gameEngine import GameEngine
-from ._text import Text
-from .__mainMenu import MainMenu
-from .Map import WallType
-from .Map.Entities.Items.Utility import Vector2d, Directions
-from .Map import Deck
+from Application.Map.Entities import Skeleton as Skel
+from Application.Map.Entities import Hero, Enemy, Trap
+from Application.Map.Entities.Items import Armor, Weapon, HealingPotion, ManaPotion
+from Application import *
+from Application.Map import WallType
+from Application.Map.Entities.Items.Utility import Vector2d, Directions
+from Application.Map import Deck
 
 
 from time import sleep
@@ -66,6 +63,8 @@ class Game:
 
         self.item_textures = {
             "Healing Potion": pygame.image.load("Resources/healing_potion.png"),
+            "Small Healing Potion": pygame.image.load("Resources/healing_potion.png"),
+            "Standard Healing Potion": pygame.image.load("Resources/healing_potion.png"),
             "Mana Potion": pygame.image.load("Resources/mana_potion.png"),
             "Sword": pygame.image.load("Resources/sword.png"),
             "Armour": pygame.image.load("Resources/armour.png"),
@@ -74,7 +73,26 @@ class Game:
             "Rusty Sword": pygame.image.load("Resources/sword2.png"),
             "Good Armour": pygame.image.load("Resources/armour1.png"),
             "Rusty Armour": pygame.image.load("Resources/armour2.png"),
-            "Crate": pygame.image.load("Resources/crate.png")
+            "Crate": pygame.image.load("Resources/crate.png"),
+            "Alpollo shoes": pygame.image.load("Resources/apollo_shoes.png"),
+            "Battle axe": pygame.image.load("Resources/battle_axe.png"),
+            "Crab arms": pygame.image.load("Resources/crab_arms.png"),
+            "Fire staff": pygame.image.load("Resources/fire_staff.png"),
+            "Giant mace": pygame.image.load("Resources/giant_mace.png"),
+            "Ice wand": pygame.image.load("Resources/ice_wand.png"),
+            "Lance": pygame.image.load("Resources/lance.png"),
+            "Large Healing Potion": pygame.image.load("Resources/large_healing_potion.png"),
+            "Magical bow": pygame.image.load("Resources/magical_bow.png"),
+            "Small Healing Potion": pygame.image.load("Resources/small_healing_potion.png"),
+            "Strong bow": pygame.image.load("Resources/strong_bow.png"),
+            "Weird laser sword": pygame.image.load("Resources/weird_laser.png"),
+            "Dragon Scale Armor": pygame.image.load("Resources/dragon_scale_armor.png"),
+            "Iron Armor": pygame.image.load("Resources/iron_armor.png"),
+            "Leather Armor": pygame.image.load("Resources/leather_armor.png"),
+            "Steel Armor": pygame.image.load("Resources/steel_armor.png"),
+            "Mithril Armor": pygame.image.load("Resources/mithril_armor.png"),
+            "Throwable bombs": pygame.image.load("Resources/throwable_bombs.png"),
+            "Ultimate Healing Potion": pygame.image.load("Resources/ultimate_healing_potion.png")
         }
 
         self.entity_textures = {
@@ -119,7 +137,7 @@ class Game:
     def run(self):
         self.game_engine = GameEngine()
         self.hero_position = Vector2d(2, 2)
-        self.deck.generate_cards(5)
+        self.deck.generate_cards(10)
         weapon = Weapon("Sword", "A sharp blade", 10, 5, [Vector2d(0, 1),
                                                           Vector2d(1, 1), Vector2d(-1, 1), Vector2d(0, 2),
                                                           Vector2d(1, 2), Vector2d(-1, 2)])
@@ -130,16 +148,8 @@ class Game:
         direction = Directions.SOUTH
         self.create_character("Hero", 1, weapon, armor, position, list_of_moves, max_health, direction)
         self.game_engine.map.add_entity(self.hero)
-        healing_potion1 = HealingPotion("Healing Potion", "A potion that heals you", 10, 5)
-        healing_potion2 = HealingPotion("Healing Potion", "A potion that heals you", 10, 5)
         mana_potion1 = ManaPotion("Mana Potion", "A potion that restores mana", 10, 5)
-        mana_potion2 = ManaPotion("Mana Potion", "A potion that restores mana", 10, 5)
-        self.hero.add_item(healing_potion1)
         self.hero.add_item(mana_potion1)
-        self.hero.add_item(healing_potion2)
-        self.hero.add_item(mana_potion2)
-        self.hero.inventory.append(weapon)
-        self.hero.inventory.append(armor)
 
         self.hero_money = self.hero.money
 
@@ -150,19 +160,10 @@ class Game:
         self.in_boss = False
         self.in_shop = False
 
-        weapon1 = Weapon("Bloody Sword", "A bloody sword", 10, 10, [Vector2d(0, 1)])
-        armor1 = Armor("Good Armour", "A sturdy armour", 15, 3)
-        weapon2 = Weapon("Rusty Sword", "A bloody sword", 10, 10, [Vector2d(0, 1)])
-        armor2 = Armor("Rusty Armour", "A sturdy armour", 15, 3)
-
-        self.hero.inventory.append(weapon1)
-        self.hero.inventory.append(armor1)
-        self.hero.inventory.append(weapon2)
-        self.hero.inventory.append(armor2)
-
-
         self.equip_weapon(weapon)
         self.equip_armor(armor)
+        self.index_of_equipped_weapon = 0
+        self.index_of_equipped_armor = 1
 
         self.set_offset()
         self.inventory_size = len(self.hero.inventory)
@@ -175,6 +176,7 @@ class Game:
                         self.running = False
                     elif event.type == pygame.MOUSEBUTTONDOWN:
                         if self.main_menu.handle_events(event) == 1:
+                            print("New Game")
                             self.screen.fill((0, 0, 0))
                             self.in_main_menu = False
                             self.paused = False
@@ -291,16 +293,19 @@ class Game:
                             self.selected_equipment_index = None
                 elif self.new_game_button.is_clicked(event):
                     if self.game_over_won or self.game_over_lost:
+                        print("New Game")
                         self.game_over_won = self.game_over_lost = False
-                        pygame.display.flip()
                         self.screen.fill((0, 0, 0))
+                        self.in_main_menu = False
+                        self.paused = False
+                        self.current_sequence_index = 0
                         self.run()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.move_counter = 0
-                    self.hero.list_of_moves = [Directions.NORTH] * 5#TODO usunac
+                    self.hero.list_of_moves = [Directions.NORTH] * 15#TODO usunac
                     for enemy in self.enemies:
-                        enemy.list_of_moves = [Directions.NORTH] * 5#TODO usunac
+                        enemy.list_of_moves = [Directions.NORTH] * 15#TODO usunac
                 if self.game_engine.map[self.hero.position].wall.type != WallType.HALF and not self.hero_moving:
                     if event.key == pygame.K_UP:
                         self.hero.current_direction = Directions.NORTH
@@ -331,9 +336,7 @@ class Game:
             self.game_engine.map.perform_turn()
             if previous_hp != self.hero.current_health and previous_hp >= self.hero.max_health // 5 > self.hero.current_health:
                 self.display_message("Low health!")
-            self.move_counter += 1
-            if self.move_counter == 5:
-                self.hero.list_of_moves = []
+            self.hero.list_of_moves.pop(0)
         else:
             self.hero_moving = False
             self.hero_attacking = False
@@ -427,6 +430,8 @@ class Game:
 
     def go_to_maze(self):
         self.transition_screen()
+        if len(self.deck.cards) <= 6:
+            self.deck.add_cards_any(3)
         self.in_boss = False
         self.in_shop = False
         self.in_maze = True
@@ -529,9 +534,16 @@ class Game:
                             (x * self.scale, y * self.scale))
 
                 if cell.shop_item:
-                    self.screen.blit(
-                        pygame.transform.scale(self.item_textures[cell.shop_item.item.name], (self.scale // scale, self.scale // scale)),
-                        (x * self.scale, y * self.scale))
+                    if cell.shop_item.item.name in self.item_textures:
+                        self.screen.blit(
+                            pygame.transform.scale(self.item_textures[cell.shop_item.item.name], (self.scale // scale, self.scale // scale)),
+                            (x * self.scale, y * self.scale))
+                    else:
+                        print(f"Texture for {cell.shop_item.item.name} not found")
+                        self.screen.blit(
+                            pygame.transform.scale(self.item_textures["Crate"], (self.scale // scale, self.scale // scale)),
+                            (x * self.scale, y * self.scale))
+
                     price = cell.shop_item.price
                     price_text = self.font.render(str(price), True, (0, 0, 0))
                     self.screen.blit(price_text, (x * self.scale, y * self.scale))
@@ -700,7 +712,10 @@ class Game:
             col = i % items_per_row
             x = start_x + col * item_width
             y = start_y + row * item_height
-            self.screen.blit(pygame.transform.scale(self.item_textures[item.name], (item_width, item_height)), (x, y))
+            if item.name in self.item_textures:
+                self.screen.blit(pygame.transform.scale(self.item_textures[item.name], (item_width, item_height)), (x, y))
+            else:
+                self.screen.blit(pygame.transform.scale(self.item_textures["Crate"], (item_width, item_height)), (x, y))
             if i == self.selected_equipment_index:
                 pygame.draw.rect(self.screen, (0, 255, 0), (x, y, item_width, item_height), 3)
             if i == self.index_of_equipped_weapon:
