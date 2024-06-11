@@ -276,6 +276,16 @@ class MapMaker():
                                            "XX1____7XX",
                                            "XXX____XXX",
                                            "XXX____XXX"]
+        self.str_cells_dict["end"] = ["XXX____XXX",
+                                      "XXX____XXX",
+                                      "XX3____XXX",
+                                      "___7X1_XXX",
+                                      "___X_5_XXX",
+                                      "___51_7XXX",
+                                      "_____7XXXX",
+                                      "XXXXXXXXXX",
+                                      "XXXXXXXXXX",
+                                      "XXXXXXXXXX"]
 
     def create_map(self, size) -> Map:
         junction_arr = [[] for _ in range(size * 2 + 1)]
@@ -304,6 +314,11 @@ class MapMaker():
         junction = random.randint(0, 1)
         junction_arr[1][1] = f"{junction}"
         junction_arr[2][0] = f"{1 - junction}"
+        dim_1= len(junction_arr)
+        dim_2= len(junction_arr[0])
+        junction_arr[dim_1-3][dim_2-1]="1"
+        junction_arr[dim_1-2][dim_2-1]="1"
+
 
         str_arr = [[copy.deepcopy("?") for _ in range(size)] for _ in range(size)]
         for x in range(size):
@@ -311,6 +326,7 @@ class MapMaker():
                 str_arr[x][y] = junction_arr[x * 2][y] + junction_arr[x * 2 + 1][y + 1] + \
                                 junction_arr[(x + 1) * 2][y] + junction_arr[x * 2 + 1][y]
                 # str_arr[x][y]="2021"
+        str_arr[size-1][size-1]="end"
         for lane in str_arr:
             print(lane)
         print()
@@ -320,30 +336,46 @@ class MapMaker():
                 map.tiles_dictionary[Vector2d(y, x)] = self.create_tile(str_arr[x][y], Vector2d(x, y))
         return map
 
-    def create_shop(self,first_shop:bool=True) -> Map:
-        attacks = [Vector2d(x, y) for x, y in [(-4,-3),(-3,-2),(-2,-2),(-1,-1),(4,-3),(3,-2),(2,-2),(1,-1)]]
+    def create_shop(self, first_shop: bool = True) -> Map:
+        attacks = [Vector2d(x, y) for x, y in
+                   [(-4, -3), (-3, -2), (-2, -2), (-1, -1), (4, -3), (3, -2), (2, -2), (1, -1)]]
         a_s = ShopItem(Weapon("Alpollo shoes", "Shoes of ghostly speed", 7, 5, copy.deepcopy(attacks)), 15)
-        attacks = [Vector2d(x, y) for x, y in [(1,1),(2,2),(3,3),(4,4),(2,4),(4,2),(-1,1),(-2,2),(-3,3),(-4,4),(-2,4),(-4,2)]]
+        attacks = [Vector2d(x, y) for x, y in
+                   [(1, 1), (2, 2), (3, 3), (4, 4), (2, 4), (4, 2), (-1, 1), (-2, 2), (-3, 3), (-4, 4), (-2, 4),
+                    (-4, 2)]]
         i_w = ShopItem(Weapon("Ice wand", "Chilly stick of frost", 7, 2, copy.deepcopy(attacks)), 15)
-        attacks = [Vector2d(x, y) for x, y in [(0,3),(0,1),(1,2),(2,3),(3,4),(4,5),(1,3),(1,4),(2,5),(-1,2),(-2,3),(-3,4),(-4,5),(-1,3),(-1,4),(-2,5)]]
+        attacks = [Vector2d(x, y) for x, y in
+                   [(0, 3), (0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (1, 3), (1, 4), (2, 5), (-1, 2), (-2, 3), (-3, 4),
+                    (-4, 5), (-1, 3), (-1, 4), (-2, 5)]]
         f_s = ShopItem(Weapon("Fire staff", "Burning rod of fury", 7, 2, copy.deepcopy(attacks)), 15)
-        attacks = [Vector2d(x, y) for x, y in [(0,0),(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(1,2),(1,4),(1,5),(2,5),(-1,2),(-1,4),(-1,5),(-2,5)]]
+        attacks = [Vector2d(x, y) for x, y in
+                   [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (1, 2), (1, 4), (1, 5), (2, 5), (-1, 2),
+                    (-1, 4), (-1, 5), (-2, 5)]]
         g_m = ShopItem(Weapon("Giant mace", "Crushing club of doom", 7, 2, copy.deepcopy(attacks)), 20)
-        attacks = [Vector2d(0, y) for y in range(0,10)]
+        attacks = [Vector2d(0, y) for y in range(0, 10)]
         s_b = ShopItem(Weapon("Strong bow", "Bow of immense strength", 7, 4, copy.deepcopy(attacks)), 23)
-        attacks = [Vector2d(x, y) for x, y in [(0,1),(0,2),(0,3),(0,4),(0,5),(1,2),(1,4),(1,6),(-1,2),(-1,4),(-1,6)]]
-        m_b = ShopItem(Weapon("Magical bow", "Enchanted arrow launcher", 7, 4,copy.deepcopy(attacks)), 26)
-        attacks = [Vector2d(x, y) for x, y in [(0,5),(0,6),(0,7),(0,8),(0,9),(1,3),(1,6),(1,7),(1,8),(2,2),(2,3),(2,4),(2,7),(3,3),(-1,3),(-1,6),(-1,7),(-1,8),(-2,2),(-2,3),(-2,4),(-2,7),(-3,3),]]
+        attacks = [Vector2d(x, y) for x, y in
+                   [(0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (1, 2), (1, 4), (1, 6), (-1, 2), (-1, 4), (-1, 6)]]
+        m_b = ShopItem(Weapon("Magical bow", "Enchanted arrow launcher", 7, 4, copy.deepcopy(attacks)), 26)
+        attacks = [Vector2d(x, y) for x, y in
+                   [(0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (1, 3), (1, 6), (1, 7), (1, 8), (2, 2), (2, 3), (2, 4),
+                    (2, 7), (3, 3), (-1, 3), (-1, 6), (-1, 7), (-1, 8), (-2, 2), (-2, 3), (-2, 4), (-2, 7), (-3, 3), ]]
         t_b = ShopItem(Weapon("Throwable bombs", "Explosive hand grenades", 7, 6, copy.deepcopy(attacks)), 56)
-        attacks = [Vector2d(x, y) for x, y in [(0,0),(-1,1),(-2,2),(-2,3),(-3,2),(1,1),(1,4),(2,2),(2,3),(2,4),(2,5),(3,1),(3,2),(3,4),(4,1),(5,1),(5,2),(5,3)]]
+        attacks = [Vector2d(x, y) for x, y in
+                   [(0, 0), (-1, 1), (-2, 2), (-2, 3), (-3, 2), (1, 1), (1, 4), (2, 2), (2, 3), (2, 4), (2, 5), (3, 1),
+                    (3, 2), (3, 4), (4, 1), (5, 1), (5, 2), (5, 3)]]
         c_a = ShopItem(Weapon("Crab arms", "Goofy pinching claws", 7, 9, copy.deepcopy(attacks)), 99)
-        attacks = [Vector2d(x, 0) for x in [-4,-3,-2,-1,1,2,3,4]]
+        attacks = [Vector2d(x, 0) for x in [-4, -3, -2, -1, 1, 2, 3, 4]]
         w_l_s = ShopItem(Weapon("Weird laser sword", "Beaming blade of oddity", 7, 2, copy.deepcopy(attacks)), 1)
-        attacks = [Vector2d(x, y) for x, y in [(0,0),(0,1),(0,2),(0,3),(0,4),(1,3),(1,4),(1,5),(1,6),(2,4),(2,5),(-1,3),(-1,4),(-1,5),(-1,6),(-2,4),(-2,5)]]
+        attacks = [Vector2d(x, y) for x, y in
+                   [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 3), (1, 4), (1, 5), (1, 6), (2, 4), (2, 5), (-1, 3),
+                    (-1, 4), (-1, 5), (-1, 6), (-2, 4), (-2, 5)]]
         b_a = ShopItem(Weapon("Battle axe", "Heavy war chopper", 7, 3, copy.deepcopy(attacks)), 35)
-        attacks = [Vector2d(x, y) for x, y in [(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(1,0),(1,1),(1,2),(1,3),(2,1),(-1,0),(-1,1),(-1,2),(-1,3),(-2,1)]]
+        attacks = [Vector2d(x, y) for x, y in
+                   [(0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (1, 0), (1, 1), (1, 2), (1, 3), (2, 1), (-1, 0),
+                    (-1, 1), (-1, 2), (-1, 3), (-2, 1)]]
         l_ = ShopItem(Weapon("Lance", "Knight's piercing pole", 7, 3, attacks), 55)
-        list_of_weapons=[a_s,i_w,f_s,g_m,s_b,m_b,t_b,c_a,w_l_s,b_a,l_]
+        list_of_weapons = [a_s, i_w, f_s, g_m, s_b, m_b, t_b, c_a, w_l_s, b_a, l_]
         random.shuffle(list_of_weapons)
 
         pot_0 = ShopItem(HealingPotion("Small Healing Potion", "Quick minor heal", 1, 5), 5)
@@ -351,14 +383,14 @@ class MapMaker():
         pot_2 = ShopItem(HealingPotion("Large Healing Potion", "Significant health recovery", 1, 25), 25)
         pot_3 = ShopItem(HealingPotion("Mega Healing Potion", "Heals major injuries", 2, 50), 50)
         pot_4 = ShopItem(HealingPotion("Ultimate Healing Potion", "Complete health restore", 1, 100), 100)
-        list_of_potions=[pot_0,pot_1,pot_2,pot_3,pot_4]
+        list_of_potions = [pot_0, pot_1, pot_2, pot_3, pot_4]
 
         armor_0 = ShopItem(Armor("Leather Armor", "Basic protection", 10, 1), 10)
         armor_1 = ShopItem(Armor("Iron Armor", "Solid defense", 15, 3), 30)
         armor_2 = ShopItem(Armor("Steel Armor", "Strong protection", 20, 5), 50)
         armor_3 = ShopItem(Armor("Mithril Armor", "Light and durable", 10, 7), 70)
         armor_4 = ShopItem(Armor("Dragon Scale Armor", "Ultimate defense", 25, 10), 100)
-        lisot_of_armors= [armor_0, armor_1, armor_2, armor_3, armor_4]
+        lisot_of_armors = [armor_0, armor_1, armor_2, armor_3, armor_4]
 
         size = 3
         str_arr = [[copy.deepcopy("?") for _ in range(size)] for _ in range(size)]
@@ -386,41 +418,42 @@ class MapMaker():
             print(lane)
         print()
         map = Map()
-        shop_candidates=[]
+        shop_candidates = []
         for x in range(size):
             for y in range(size):
                 map.tiles_dictionary[Vector2d(y, x)] = self.create_tile(str_arr[x][y], Vector2d(x, y))
-        for x in range(size*10):
-            for y in range(size*10):
-                if map[Vector2d(x,y)].wall.type==WallType.EMPTY:
-                    shop_candidates.append(map[Vector2d(x,y)])
+        for x in range(size * 10):
+            for y in range(size * 10):
+                if map[Vector2d(x, y)].wall.type == WallType.EMPTY:
+                    shop_candidates.append(map[Vector2d(x, y)])
 
         random.shuffle(shop_candidates)
         if first_shop:
-            shop_candidates[0].shop_item=list_of_weapons[0]
-            shop_candidates[1].shop_item=list_of_weapons[1]
-            shop_candidates[2].shop_item=list_of_weapons[2]
-            shop_candidates[3].shop_item=list_of_weapons[3]
-            shop_candidates[4].shop_item=list_of_potions[0]
-            shop_candidates[5].shop_item=list_of_potions[1]
-            shop_candidates[6].shop_item=list_of_potions[2]
-            shop_candidates[7].shop_item=lisot_of_armors[0]
-            shop_candidates[8].shop_item=lisot_of_armors[1]
+            shop_candidates[0].shop_item = list_of_weapons[0]
+            shop_candidates[1].shop_item = list_of_weapons[1]
+            shop_candidates[2].shop_item = list_of_weapons[2]
+            shop_candidates[3].shop_item = list_of_weapons[3]
+            shop_candidates[4].shop_item = list_of_potions[0]
+            shop_candidates[5].shop_item = list_of_potions[1]
+            shop_candidates[6].shop_item = list_of_potions[2]
+            shop_candidates[7].shop_item = lisot_of_armors[0]
+            shop_candidates[8].shop_item = lisot_of_armors[1]
         else:
-            shop_candidates[0].shop_item=list_of_weapons[0]
-            shop_candidates[1].shop_item=list_of_weapons[1]
-            shop_candidates[2].shop_item=list_of_weapons[2]
-            shop_candidates[3].shop_item=list_of_weapons[3]
-            shop_candidates[4].shop_item=list_of_potions[3]
-            shop_candidates[5].shop_item=list_of_potions[4]
-            shop_candidates[6].shop_item=lisot_of_armors[2]
-            shop_candidates[7].shop_item=lisot_of_armors[3]
-            shop_candidates[8].shop_item=lisot_of_armors[4]
-        for x in range(size*10):
-            for y in range(size*10):
-                if map[Vector2d(x,y)].shop_item!=None:
-                    print(x,y, map[Vector2d(x,y)].shop_item.item.name)
+            shop_candidates[0].shop_item = list_of_weapons[0]
+            shop_candidates[1].shop_item = list_of_weapons[1]
+            shop_candidates[2].shop_item = list_of_weapons[2]
+            shop_candidates[3].shop_item = list_of_weapons[3]
+            shop_candidates[4].shop_item = list_of_potions[3]
+            shop_candidates[5].shop_item = list_of_potions[4]
+            shop_candidates[6].shop_item = lisot_of_armors[2]
+            shop_candidates[7].shop_item = lisot_of_armors[3]
+            shop_candidates[8].shop_item = lisot_of_armors[4]
+        for x in range(size * 10):
+            for y in range(size * 10):
+                if map[Vector2d(x, y)].shop_item != None:
+                    print(x, y, map[Vector2d(x, y)].shop_item.item.name)
         return map
+
     def create_boss_arena(self) -> Map:
         size = 2
         str_arr = [[copy.deepcopy("?") for _ in range(size)] for _ in range(size)]
@@ -437,6 +470,7 @@ class MapMaker():
             for y in range(size):
                 map.tiles_dictionary[Vector2d(y, x)] = self.create_tile(str_arr[x][y], Vector2d(x, y))
         return map
+
     def create_tile(self, id: str, vector: Vector2d) -> Tile:
         # print(f"creating tile, id:{id}, v:{vector}")
         tile = Tile(vector, {})

@@ -155,7 +155,8 @@ class Game:
 
         self.place_enemies(15, 5)
 
-        self.checkpoint_shop = Vector2d(5, 5)
+        self.checkpoint_shop = Vector2d((self.game_engine.size)*10 +4,(self.game_engine.size)*10 +4)
+        self.checkpoint_shop = Vector2d(24, 24)
         self.in_maze = True
         self.in_boss = False
         self.in_shop = False
@@ -576,7 +577,7 @@ class Game:
 
         hp_text = font.render(f"HP: {self.hero.current_health}", True, (255, 255, 255))
         gold_text = font.render(f"Gold: {self.hero.money}", True, (255, 255, 255))
-        position_text = font.render(f"Distance: {self.hero.distance}", True, (255, 255, 255))
+        position_text = font.render(f"Position: {self.hero.position}", True, (255, 255, 255))
 
         weapon_text = font.render(f"Weapon: {self.hero.weapon.name if self.hero.weapon else 'None'}", True,
                                   (255, 255, 255))

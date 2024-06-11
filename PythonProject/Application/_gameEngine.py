@@ -5,7 +5,8 @@ from .Map.map_maker import MapMaker
 class GameEngine:
     def __init__(self):
         mm=MapMaker()
-        self.map = mm.create_map(3)
+        self.size = 3
+        self.map = mm.create_map(self.size)
         self.hero_position = Vector2d(2, 2)
 
     def go_to_shop(self,first_shop:bool=True):
