@@ -1,4 +1,3 @@
-import random
 from abc import ABC as abc
 from .Items.Utility import Vector2d
 from .Items.Utility import Directions
@@ -31,10 +30,3 @@ class Entity(abc):
         self.current_health -= damage
         if self.current_health <= 0:
             self.alive = False
-
-    def random_direction(self):
-        if random.random() < 0.25:
-            self.current_direction = random.choice(
-                [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST])
-
-

@@ -73,18 +73,8 @@ class Hero(Entity):
         self.current_health += amount_of_healing
         if self.current_health > self.max_health:
             self.current_health = self.max_health
-
-    # def buy_item(self, item):
-    #     print(self.money, item.price)
-    #     if self.money >= item.price:
-    #         self.money -= item.price
-    #         self.inventory.append(item)
-    #         print("You bought: ", item.name)
-    #         return True
-    #     return False
-
     def draw(self, screen)->None:
         pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(self.position[0], self.position[1], 50, 50))
 
-    def update_kills(self):
+    def update_kills(self)->None:
         self.kills += 1
