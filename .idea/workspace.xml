@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d58d36c5-7a67-49c4-ad48-9ca08dcf1cc3" name="Changes" comment="move works!">
+    <list default="true" id="d58d36c5-7a67-49c4-ad48-9ca08dcf1cc3" name="Changes" comment="shop items added">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/_enemy.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/_enemy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/_entity.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/_entity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/_hero.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/Entities/_hero.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/_cell.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_cell.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/_map.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_map.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/map_maker.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/map_maker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/_tile.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_tile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/_wall.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_wall.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/Map/map_maker.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/Map/_map_maker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject/Application/_gameEngine.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject/Application/_gameEngine.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +42,11 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\szyme\PycharmProjects\PythonProject\PythonProject\Application" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="PythonProject" />
@@ -78,7 +91,14 @@
       <option name="project" value="LOCAL" />
       <updated>1718047805631</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="shop items added">
+      <created>1718060880838</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1718060880839</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -94,6 +114,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="move works!" />
-    <option name="LAST_COMMIT_MESSAGE" value="move works!" />
+    <MESSAGE value="shop items added" />
+    <option name="LAST_COMMIT_MESSAGE" value="shop items added" />
   </component>
 </project>

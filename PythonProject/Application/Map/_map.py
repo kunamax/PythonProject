@@ -127,61 +127,6 @@ class Map:
 
         if isinstance(entity, Hero):
             entity.distance += 1
-    # def _handle_bouncle(self,entity:Entity,next_wall:Wall)->Vector2d:
-    #     # tmp=e_facing.opposite.to_int()-w_facing.to_int()
-    #     # return Directions( (w_facing.to_int()-tmp)%8 )
-    #     e_facing=entity.current_direction
-    #     w_facing=next_wall.facing
-    #     """obraca tak jak powinien i zwraca """
-    #     if abs(entity.current_direction.to_int() - next_wall.facing.to_int()) == 1 \
-    #             or abs(entity.current_direction.to_int() - next_wall.facing.to_int()) == 7:
-    #         entity.current_direction = entity.current_direction.opposite
-    #         return entity.position
-    #     else:
-    #         tmp=e_facing.opposite.to_int()-w_facing.to_int()
-    #         return Directions( (w_facing.to_int()-tmp)%8 )
-    #         entity.current_direction = entity._handle_bouncle(entity.current_direction, next_wall.facing)
-    #         next_cell_vector = next_cell_vector_candodate
-
-    def generate_demo(self)->None:
-        size = 2
-
-        for x in range(-size, size + 1):
-            for y in range(-size, size + 1):
-                tile = Tile(Vector2d(x, y), {})
-                for i in range(10):
-                    for j in range(10):
-                        if (x == size and i == 9) or (x == -size and i == 0) or (y == size and j == 9) or (y == -size and j == 0):
-                            tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType.FULL, Directions(0)), [])
-                        elif random.choices([True, False], [0.1, 0.9])[0] and not (i == 0 and j == 0):
-                            tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(1), Directions(0)), [])
-                        elif i == 0 and j == 0:
-                            tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(0), Directions(0)), [])
-                        else:
-                            tile.cells_dict[Vector2d(i, j)] = Cell(Wall(WallType(0), Directions(0)), [])
-                self.tiles_dictionary[Vector2d(x, y)] = tile
-    def generate_demo_shop(self) -> None:
-        self.tiles_dictionary[Vector2d(-1, -1)]=Tile(Vector2d(-1,-1),{})
-        self.tiles_dictionary[Vector2d(-1, 0)]=Tile(Vector2d(-1,0),{})
-        self.tiles_dictionary[Vector2d(-1, 1)]=Tile(Vector2d(-1,1),{})
-        self.tiles_dictionary[Vector2d(0, 1)]=Tile(Vector2d(0,1),{})
-        self.tiles_dictionary[Vector2d(0, 0)]=Tile(Vector2d(0,0),{})
-        self.tiles_dictionary[Vector2d(0, -1)]=Tile(Vector2d(0,-1),{})
-        self.tiles_dictionary[Vector2d(1, -1)]=Tile(Vector2d(1,-1),{})
-        self.tiles_dictionary[Vector2d(1, 0)]=Tile(Vector2d(1,0),{})
-        self.tiles_dictionary[Vector2d(1, 1)]=Tile(Vector2d(1,1),{})
-
-        self.tiles_dictionary[Vector2d(-1, -1)].generate_demo_turn("lower right")
-        self.tiles_dictionary[Vector2d(-1, 0)].generate_demo_straight("left", shop_tile=True)
-        self.tiles_dictionary[Vector2d(-1, 1)].generate_demo_turn("upper right")
-        self.tiles_dictionary[Vector2d(0, 1)].generate_demo_straight("down", shop_tile=True)
-        self.tiles_dictionary[Vector2d(0, 0)].generate_demo_cross()
-        self.tiles_dictionary[Vector2d(0, -1)].generate_demo_straight("up", shop_tile=True)
-        self.tiles_dictionary[Vector2d(1, -1)].generate_demo_turn("lower left")
-        self.tiles_dictionary[Vector2d(1, 0)].generate_demo_straight("right", shop_tile=True)
-        self.tiles_dictionary[Vector2d(1, 1)].generate_demo_turn("upper left")
-
-
 
 if __name__ == "__main__":
     size = 10

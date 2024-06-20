@@ -1,6 +1,6 @@
 from Application.Map._map import Map
 from Application.Map.Entities.Items.Utility import Vector2d
-from .Map.map_maker import MapMaker
+from .Map._map_maker import MapMaker
 
 class GameEngine:
     def __init__(self):

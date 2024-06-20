@@ -2,13 +2,16 @@ import random
 
 import pygame
 
-from Application.Map.Entities import Skeleton as Skel
-from Application.Map.Entities import Hero, Enemy, Trap
-from Application.Map.Entities.Items import Armor, Weapon, HealingPotion, ManaPotion
-from Application import *
-from Application.Map import WallType
-from Application.Map.Entities.Items.Utility import Vector2d, Directions
-from Application.Map import Deck
+from .Map.Entities import Skeleton as Skel
+from .Map.Entities import Hero, Enemy, Trap
+from .Map.Entities.Items import Armor, Weapon, HealingPotion, ManaPotion
+from .Map import WallType
+from .Map.Entities.Items.Utility import Vector2d, Directions
+from .Map import Deck
+from ._text import Text
+from .__mainMenu import MainMenu
+from ._gameEngine import GameEngine
+from ._button import Button
 
 
 from time import sleep
